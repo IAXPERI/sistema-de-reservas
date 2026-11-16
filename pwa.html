@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#7c3aed">
+  <title>LevelUp Arcade Bar — PWA Cero-Scroll</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="pwa.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="pwa.js" defer></script>
+</head>
+<body>
+  <div class="hud-app">
+    <header class="top-hud">
+      <div class="hud-profile">
+        <div class="hud-avatar">🕹️</div>
+        <div class="hud-user-meta">
+          <div class="hud-user-row">
+            <strong>LevelUp Arcade Bar</strong>
+            <span class="hud-lvl">🟢 Disponibles</span>
+          </div>
+          <small>Estaciones Gamer, Snack Bar &amp; Reservas</small>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <span id="pwaBoxTimer" class="hud-pill" style="display:none; background:#fee2e2; color:#dc2626;">⏱️ <span id="pwaTimerTop">00:30s</span></span>
+        <span id="estadoRed" class="hud-pill hud-net">🟢 En Línea</span>
+        <a href="index.html" class="btn-pc-back">💻 Vista PC</a>
+        <button type="button" id="pwaThemeBtn" class="btn-hud-icon" title="Cambiar Tema">🌙</button>
+      </div>
+    </header>
+
+    <main class="hud-viewport">
+      <!-- PESTAÑA 1: INICIO + PROMOCIONES ROTATIVAS (IGUAL A INDEX.HTML) -->
+      <section id="pane-inicio" class="hud-pane active">
+        <div class="lobby-grid">
+          <div class="lobby-left">
+            <button type="button" class="side-shortcut" data-go="pane-catalogo"><span>🎮</span><small>Catálogo</small></button>
+            <button type="button" class="side-shortcut" data-go="pane-cotizar"><span>🧮</span><small>Reservar</small></button>
+            <button type="button" class="side-shortcut" data-go="pane-seguridad"><span>🛡️</span><small>Anti-XSS</small></button>
+          </div>
+
+          <div class="lobby-center-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+              <span class="badge-season">🔥 PROMOCIONES ROTATIVAS</span>
+              <span style="font-size:11px; color:#fbbf24; font-weight:800;">🔄 Próxima: <span id="pwaPromoCountdown">02:00</span></span>
+            </div>
+
+            <div id="pwaPromoBox" style="background:rgba(0,0,0,0.28); border:1px solid #f59e0b; border-radius:10px; padding:12px;">
+              <h2 id="pwaPromoTitulo" style="font-size:15px; color:#fbbf24; margin-bottom:4px;">🎮⚡ Promo 1: Dúo Next-Gen PS5 + Monster &amp; Papas</h2>
+              <p id="pwaPromoDesc" style="font-size:12px; color:#cbd5e1; margin-bottom:6px;">Incluye 2 Horas en Estación PS5 (EA Sports FC 26 / Tekken 8) + Porción de Papas Cheddar + 1 Monster Energy.</p>
+              <strong id="pwaPromoPrecio" style="color:#10b981; font-size:14px;">🔥 Oferta: 118 BOB</strong>
+            </div>
+
+            <div class="lobby-stats-row">
+              <div class="stat-box"><small>Estación PS5</small><strong>40 BOB/hr</strong></div>
+              <div class="stat-box"><small>PC Gamer Pro</small><strong>25 BOB/hr</strong></div>
+              <div class="stat-box"><small>Cabina Arcade</small><strong>15 BOB/hr</strong></div>
+            </div>
+
+            <button type="button" id="btnIrCatalogo" class="btn-hud-primary">🚀 Ver Catálogo de Estaciones &amp; Snacks (15)</button>
+          </div>
+
+          <div class="lobby-right">
+            <div class="mini-panel" id="contenedorMenu" data-hidratado="false">
+              <h4>⚡ Estado PWA</h4>
+              <p>Service Worker v2 listo para uso offline.</p>
+              <button type="button" id="btnPWA" class="btn-hud-secondary">Hidratar SW</button>
+            </div>
+            <div class="mini-panel">
+              <h4>❤️ Favoritos</h4>
+              <p>Doble clic en cualquier estación para marcar favorita.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PESTAÑA 2: CATÁLOGO PAGINADO CERO-SCROLL -->
+      <section id="pane-catalogo" class="hud-pane">
+        <div class="pane-header">
+          <input type="text" id="pwaBuscar" class="hud-input" placeholder="🔍 Buscar PS5, PC Gamer, Arcade o Snacks...">
+          <div class="hud-filter-row" id="pwaFilterBar">
+            <button type="button" class="hud-filter-btn active" data-cat="todos">✨ Todos</button>
+            <button type="button" class="hud-filter-btn" data-cat="ps5">🎮 PS5</button>
+            <button type="button" class="hud-filter-btn" data-cat="pc">💻 PC</button>
+            <button type="button" class="hud-filter-btn" data-cat="arcade">👾 Arcade</button>
+            <button type="button" class="hud-filter-btn" data-cat="snacks">🍔 Snacks</button>
+          </div>
+        </div>
+
+        <div class="cascada-bar">
+          <select id="pwaCascadaCat" class="hud-select">
+            <option value="">1. Plataforma</option>
+            <option value="ps5">Estación PS5 (40 BOB/hr)</option>
+            <option value="pc">PC Gamer Pro (25 BOB/hr)</option>
+            <option value="arcade">Cabina Arcade (15 BOB/hr)</option>
+          </select>
+          <select id="pwaCascadaSub" class="hud-select" disabled>
+            <option value="">2. Juegos / Specs</option>
+          </select>
+          <span id="pwaCascadaRes" class="cascada-badge" style="display:none;"></span>
+        </div>
+
+        <div id="pwaCatalogGrid" class="catalog-cards-grid"></div>
+
+        <div class="paginacion-hud">
+          <button type="button" id="btnPrevPag" class="btn-tactil-hud">◀</button>
+          <span id="infoPag" class="pag-info">1 / 1</span>
+          <button type="button" id="btnNextPag" class="btn-tactil-hud">▶</button>
+        </div>
+      </section>
+
+      <!-- PESTAÑA 3: CALCULADOR & RESERVA (IGUAL A INDEX.HTML, CERO-SCROLL) -->
+      <section id="pane-cotizar" class="hud-pane">
+        <div class="center-panel" style="gap:6px; padding:10px;">
+          <h3 style="font-size:14px;">🧮 Calculador &amp; Reserva LevelUp</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+            <input type="text" id="pwaJugador" class="hud-input" placeholder="👤 Nombre Jugador" style="min-height:40px;">
+            <input type="text" id="pwaCelular" class="hud-input" maxlength="8" placeholder="📱 Celular (7/6...)" style="min-height:40px;">
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 90px; gap:6px;">
+            <select id="pwaEstacionSelect" class="hud-select" style="min-height:40px;">
+              <option value="40" data-nombre="Estación PS5">🎮 Estación PS5 (40 BOB/hr)</option>
+              <option value="25" data-nombre="PC Gamer Pro">💻 PC Gamer Pro (25 BOB/hr)</option>
+              <option value="15" data-nombre="Cabina Arcade">👾 Cabina Arcade (15 BOB/hr)</option>
+            </select>
+            <input type="number" id="pwaHorasInput" class="hud-input" value="1" min="1" max="8" style="min-height:40px;" title="Horas">
+          </div>
+          <select id="pwaSnackSelect" class="hud-select" style="min-height:40px;">
+            <option value="0" data-snack="Sin Snack">Sin Snack Adicional (+0 BOB)</option>
+            <option value="38" data-snack="Combo Gamer 1 (Papas Cheddar + Monster)">🍟 Combo Gamer 1: Papas + Monster (+38 BOB)</option>
+            <option value="30" data-snack="Combo Gamer 2 (Salchipapa + Speed)">🍟 Combo Gamer 2: Salchipapa + Speed (+30 BOB)</option>
+            <option value="52" data-snack="Combo Gamer 3 (Burger + Papas + Red Bull)">🍔 Combo Gamer 3: Burger + Red Bull (+52 BOB)</option>
+          </select>
+
+          <div class="total-hud" style="font-size:18px; margin:2px 0;">
+            Total a Pagar: <span id="pwaTotalBob">40</span> BOB
+          </div>
+
+          <div style="display:flex; gap:8px;">
+            <button type="button" id="pwaAbrirModal30s" class="btn-hud-primary" style="flex:1;">🕒 Reservar (30s)</button>
+            <button type="button" id="pwaBtnConfirmDirecto" class="btn-hud-primary" style="flex:1; background:#10b981; color:#0f172a; display:none;">✅ Confirmar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PESTAÑA 4: COLA TÁCTIL ANTI-XSS -->
+      <section id="pane-seguridad" class="hud-pane">
+        <div class="center-panel">
+          <h3>🛡️ Cola de Turnos Segura (Anti-XSS)</h3>
+          <form id="pwaFormSeguro" class="xss-form-row">
+            <input type="text" id="pwaInputSeguro" class="hud-input" placeholder="Jugador / Estación o prueba XSS..." required>
+            <button type="submit" class="btn-tactil-hud btn-accent">+</button>
+            <button type="button" id="pwaBtnTestXss" class="btn-tactil-hud btn-danger">XSS</button>
+          </form>
+          <div id="pwaListaSegura" class="lista-segura-scroll">
+            <div class="fila-hud">
+              <span class="titulo-truncado">Estación PS5 (FC 26 / Tekken 8) — Turno 1</span>
+              <button type="button" class="btn-tactil-hud btn-quitar-hud">✕</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PESTAÑA 5: BITÁCORA -->
+      <section id="pane-bitacora" class="hud-pane">
+        <div class="center-panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <h3>📡 Bitácora de Eventos JS</h3>
+            <button type="button" id="pwaLimpiarLog" class="btn-tactil-hud" style="padding:0 12px;">Limpiar</button>
+          </div>
+          <div id="pwaLogOutput" class="log-hud">
+            <div>[Sistema] LevelUp Arcade Bar PWA sincronizada con index.html.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-hud">
+      <button type="button" class="hud-tab active" data-target="pane-inicio"><span>🔥</span><small>Promos</small></button>
+      <button type="button" class="hud-tab" data-target="pane-catalogo"><span>🎮</span><small>Catálogo</small></button>
+      <button type="button" class="hud-tab" data-target="pane-cotizar"><span>🧮</span><small>Reservar</small></button>
+      <button type="button" class="hud-tab" data-target="pane-seguridad"><span>🛡️</span><small>Anti-XSS</small></button>
+      <button type="button" class="hud-tab hud-tab-cta" data-target="pane-bitacora"><span>📡</span><small>Bitácora</small></button>
+    </nav>
+  </div>
+
+  <div id="pwaToast" class="hud-toast"></div>
+</body>
+</html>

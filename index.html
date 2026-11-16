@@ -1,0 +1,444 @@
+﻿<!-- ej_jquery_jueves.html / ej_ui_viernes.html - Proyecto Integrador LevelUp Arcade Bar -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LevelUp Arcade Bar - UI Completa (Jueves & Viernes)</title>
+    <!-- Librería jQuery 3.7.1 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+</head>
+
+<body class="dark-mode">
+
+    <!-- =========================================================
+         COMPONENTE UI #1: NAVBAR SUPERIOR + TIMER EN PARTE SUPERIOR DERECHA
+         ========================================================= -->
+    <nav class="navbar">
+        <div class="navbar-top">
+            <div class="logo-area">
+                <h1>🕹️ LevelUp Arcade Bar</h1>
+                <span class="status-badge">🟢 Estaciones Disponibles</span>
+            </div>
+
+            <div class="nav-controls">
+                <!-- Enlace a la PWA Móvil Cero-Scroll aparte -->
+                <a href="pwa.html" class="btn-pwa-link">📱 Vista Teléfono (PWA)</a>
+
+                <!-- Temporizador en la Parte Superior Derecha (Aparece recién al apretar Reservar) -->
+                <div id="box-timer" class="top-right-timer">
+                    ⏱️ Tiempo para Confirmar: <span id="mod-timer">00:30s</span>
+                </div>
+
+                <!-- Botón Modo Oscuro / Claro -->
+                <button id="btn-theme" class="btn-theme">☀️ Modo Claro</button>
+
+                <!-- Botón Menú Hamburguesa -->
+                <button id="btn-hamburger" class="btn-hamburger" title="Abrir Menú">☰</button>
+            </div>
+        </div>
+
+        <!-- Menú Desplegable Hamburguesa -->
+        <div id="nav-menu" class="nav-menu">
+            <ul>
+                <li><a href="#promociones" class="nav-link">🔥 Promociones Rotativas</a></li>
+                <li><a href="#catalogo" class="nav-link">🎮 Catálogo de Estaciones</a></li>
+                <li><a href="#zona-snacks" class="nav-link">🍟 Comida y Bebidas Energéticas</a></li>
+                <li><a href="#calculador" class="nav-link">🧮 Calculador de Horas</a></li>
+                <li><a href="#resumen" class="nav-link">🧾 Resumen de Pedido</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Toast Alert Flotante (Esquina Superior Derecha) -->
+    <div id="toast-alert" class="toast-alert"></div>
+
+    <div class="main-wrapper">
+
+        <!-- Encabezado Principal -->
+        <div class="hero-banner">
+            <div>
+                <h2>Panel de Estaciones Gamer, Snack Bar & Reservas</h2>
+                <p>Diseño Web II (C2-A1 & C2-A2) • Acordeones jQuery, Promociones Rotativas y Reserva Directa</p>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             APARTADO DE PROMOCIONES ROTATIVAS (CAMBIAN CADA 2 MINUTOS)
+             ========================================================= -->
+        <div id="promociones" class="promos-section">
+            <div class="promos-header">
+                <h3>🔥 Promociones Especiales Gamer (Rotación Automática)</h3>
+                <span class="promo-timer-badge">🔄 Próxima promoción en: <span id="promo-countdown">02:00</span></span>
+            </div>
+
+            <!-- Promoción 1 -->
+            <div class="promo-slide active-promo" data-index="0">
+                <div class="promo-content">
+                    <div class="promo-info">
+                        <h4>🎮⚡ Promo 1: Dúo Next-Gen PS5 + Monster & Papas</h4>
+                        <p>Incluye 2 Horas en Estación PS5 (EA Sports FC 26 / Tekken 8) + Porción de Papas Cheddar + 1
+                            Monster Energy.</p>
+                    </div>
+                    <div class="promo-price-box">
+                        <span class="promo-price">🔥 Oferta: 118 BOB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promoción 2 -->
+            <div class="promo-slide" data-index="1">
+                <div class="promo-content">
+                    <div class="promo-info">
+                        <h4>💻🍟 Promo 2: Maratón eSports PC Gamer 240Hz</h4>
+                        <p>Incluye 3 Horas en PC Gamer Pro (RTX 4070 Super) + Salchipapa Especial LevelUp + Bebida
+                            Energética Speed.</p>
+                    </div>
+                    <div class="promo-price-box">
+                        <span class="promo-price">🔥 Oferta: 105 BOB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promoción 3 -->
+            <div class="promo-slide" data-index="2">
+                <div class="promo-content">
+                    <div class="promo-info">
+                        <h4>👾🍔 Promo 3: Noche Retro Arcade & Burger LevelUp</h4>
+                        <p>Incluye 2 Horas de Cabina Arcade Free-Play (KOF / Street Fighter) + Burger Doble Carne con
+                            Papas + Red Bull.</p>
+                    </div>
+                    <div class="promo-price-box">
+                        <span class="promo-price">🔥 Oferta: 82 BOB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra de Filtros (.btn-console) -->
+        <div class="filter-bar">
+            <button class="btn-console active" data-categoria="todos">✨ Todos los Servicios</button>
+            <button class="btn-console" data-categoria="ps5">🎮 Estación PS5</button>
+            <button class="btn-console" data-categoria="pc">💻 PC Gamer</button>
+            <button class="btn-console" data-categoria="arcade">👾 Cabina Arcade</button>
+            <button class="btn-console" data-categoria="snacks">🍔 Comida & Energizantes</button>
+        </div>
+
+        <!-- =========================================================
+             ESTRUCTURA PRINCIPAL: CATÁLOGO + CALCULADOR + RESUMEN
+             ========================================================= -->
+        <div class="ui-architecture-grid">
+
+            <!-- COLUMNA IZQUIERDA: COMPONENTE UI #2 (CATÁLOGO EN TARJETAS) -->
+            <div id="catalogo" class="ui-box">
+                <div class="ui-box-header">
+                    <h3>🕹️ Catálogo en Tarjetas (Estaciones & Juegos)</h3>
+                    <span class="ui-tag">Componente UI #2</span>
+                </div>
+
+                <!-- Card 1: PS5 -->
+                <div class="equipo-card ps5">
+                    <div class="equipo-header">
+                        <div class="equipo-info">
+                            <span class="console-badge">PS5 • Next-Gen</span>
+                            <h4>🎮 Estación PlayStation 5 (EA Sports FC 26 / Tekken 8)</h4>
+                            <p>Juego competitivo o cooperativo local en resolución 4K nativa a 120Hz.</p>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <div class="accordion-btn">📌 Ver Detalles</div>
+                        <button class="btn-alquilar" data-estacion="Estación PS5" data-precio="40">⚡ Alquilar Hora (40
+                            BOB)</button>
+                    </div>
+
+                    <div class="accordion-panel" style="display:none;">
+                        <div class="panel-title">📋 Tarifa y Especificaciones del Equipo</div>
+                        <ul class="specs-list">
+                            <li><strong>Consola:</strong> PlayStation 5 Slim 1TB SSD NVMe</li>
+                            <li><strong>Pantalla:</strong> Smart TV OLED 55" 4K HDR10 @ 120Hz</li>
+                            <li><strong>Periféricos:</strong> 4 Mandos DualSense + Headsets Pulse 3D</li>
+                            <li><strong>Juegos:</strong> EA Sports FC 26, Tekken 8, Mortal Kombat 1, Spider-Man 2</li>
+                        </ul>
+                        <div class="price-tag">💰 Tarifa: 40 BOB / hora (Incluye equipamiento completo)</div>
+                    </div>
+                </div>
+
+                <!-- Card 2: PC Gamer -->
+                <div class="equipo-card pc">
+                    <div class="equipo-header">
+                        <div class="equipo-info">
+                            <span class="console-badge badge-pc">PC GAMER • eSports</span>
+                            <h4>💻 Estación PC Gamer Pro (Valorant / CS2 / Dota 2)</h4>
+                            <p>Equipos de alto rendimiento con monitores de 240Hz para torneos.</p>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <div class="accordion-btn">📌 Ver Detalles</div>
+                        <button class="btn-alquilar" data-estacion="PC Gamer Pro" data-precio="25">⚡ Alquilar Hora (25
+                            BOB)</button>
+                    </div>
+
+                    <div class="accordion-panel" style="display:none;">
+                        <div class="panel-title">📋 Tarifa y Especificaciones del Equipo</div>
+                        <ul class="specs-list">
+                            <li><strong>Hardware:</strong> AMD Ryzen 7 7800X3D + NVIDIA RTX 4070 Super 12GB</li>
+                            <li><strong>Memoria & Monitor:</strong> 32GB RAM DDR5 • Monitor IPS 27" 240Hz 1ms</li>
+                            <li><strong>Periféricos:</strong> Teclado Mecánico RGB + Mouse Logitech G Pro Superlight
+                            </li>
+                            <li><strong>Juegos:</strong> Valorant, Counter-Strike 2, Dota 2, League of Legends, Fortnite
+                            </li>
+                        </ul>
+                        <div class="price-tag">💰 Tarifa: 25 BOB / hora</div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Arcade -->
+                <div class="equipo-card arcade">
+                    <div class="equipo-header">
+                        <div class="equipo-info">
+                            <span class="console-badge badge-arcade">ARCADE • Retro</span>
+                            <h4>👾 Cabina Arcade Fighting (King of Fighters / Street Fighter)</h4>
+                            <p>Máquina multijuegos para 2 jugadores con palancas y botones Sanwa.</p>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <div class="accordion-btn">📌 Ver Detalles</div>
+                        <button class="btn-alquilar" data-estacion="Cabina Arcade" data-precio="15">⚡ Alquilar Hora (15
+                            BOB)</button>
+                    </div>
+
+                    <div class="accordion-panel" style="display:none;">
+                        <div class="panel-title">📋 Tarifa y Especificaciones del Equipo</div>
+                        <ul class="specs-list">
+                            <li><strong>Sistema:</strong> Cabina Arcade con Pandora Box DX Pro (5000+ juegos)</li>
+                            <li><strong>Controles:</strong> Palancas japonesas Sanwa JLF + 8 botones por jugador</li>
+                            <li><strong>Clásicos:</strong> KOF '98 y 2002, Street Fighter III, Metal Slug X, Pac-Man
+                            </li>
+                        </ul>
+                        <div class="price-tag">💰 Tarifa: 15 BOB / hora (Free Play ilimitado)</div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Zona de Comida y Bebidas Energéticas -->
+                <div id="zona-snacks" class="equipo-card snacks">
+                    <div class="equipo-header">
+                        <div class="equipo-info">
+                            <span class="console-badge badge-food">SNACK & ENERGY BAR</span>
+                            <h4>🍟 Zona de Comida, Papas Fritas y Bebidas Energéticas</h4>
+                            <p>Papas con cheddar, hamburguesas, nachos, Monster Energy y Red Bull directo a tu estación.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <div class="accordion-btn">📌 Ver Detalles</div>
+                    </div>
+
+                    <div class="accordion-panel" style="display:none;">
+                        <div class="panel-title">⚡ Carta de Bebidas Energéticas y Comida Gamer</div>
+                        <div class="menu-grid">
+                            <div class="menu-item">
+                                <h5>⚡ Bebidas Energéticas</h5>
+                                <p>• Monster Energy (Original / Mango): <strong>18 BOB</strong><br>
+                                    • Red Bull Lata 250ml: <strong>20 BOB</strong><br>
+                                    • Speed / Volt Gamer: <strong>10 BOB</strong></p>
+                            </div>
+                            <div class="menu-item">
+                                <h5>🍟 Papas & Snacks</h5>
+                                <p>• Papas Gamer Cheddar & Tocino: <strong>25 BOB</strong><br>
+                                    • Salchipapa Especial LevelUp: <strong>25 BOB</strong><br>
+                                    • Nachos Supreme con Queso: <strong>28 BOB</strong></p>
+                            </div>
+                            <div class="menu-item">
+                                <h5>🍔 Burgers & Alitas</h5>
+                                <p>• Burger Doble Carne + Papas: <strong>38 BOB</strong><br>
+                                    • Alitas BBQ (6 pzas + Papas): <strong>35 BOB</strong></p>
+                            </div>
+                        </div>
+                        <div class="price-tag">🔥 Selecciona tu Combo Gamer en el panel calculador de la derecha</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: COMPONENTE UI #3 (CALCULADOR) Y COMPONENTE UI #4 (RESUMEN) -->
+            <div>
+
+                <!-- COMPONENTE UI #3: CALCULADOR / FORMULARIO + PANEL LATERAL SNACKS -->
+                <div id="calculador" class="ui-box">
+                    <div class="ui-box-header">
+                        <h3>🧮 Calculador & Reserva</h3>
+                        <span class="ui-tag">Componente UI #3</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombre">👤 Nombre del Jugador:</label>
+                        <input type="text" id="nombre" placeholder="Ej. Carlos Mendoza">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="celular">📱 Celular / WhatsApp (8 dígitos):</label>
+                        <input type="text" id="celular" maxlength="8" placeholder="Ej. 71234567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="servicio">🎮 Estación de Juego:</label>
+                        <select id="servicio">
+                            <option value="40" data-nombre="Estación PS5">🎮 Estación PS5 (40 BOB/hr)</option>
+                            <option value="25" data-nombre="PC Gamer Pro">💻 PC Gamer Pro (25 BOB/hr)</option>
+                            <option value="15" data-nombre="Cabina Arcade">👾 Cabina Arcade (15 BOB/hr)</option>
+                        </select>
+                    </div>
+
+                    <!-- Input requerido por la Guía Viernes (#hrs) -->
+                    <div class="form-group">
+                        <label for="hrs">⏱️ Horas de Reserva (1 a 8 hrs):</label>
+                        <input type="number" id="hrs" value="1" min="1" max="8">
+                    </div>
+
+                    <!-- Panel UI Lateral: Selector de Snacks (Combo Gamer 1, 2 o 3) -->
+                    <div class="form-group">
+                        <label>🍟 Selector de Snacks & Bebidas Energéticas:</label>
+                        <div class="snack-selector">
+                            <label class="snack-option selected">
+                                <span><input type="radio" name="snack" value="0" data-snack="Sin Snack" checked> Sin
+                                    Snack Adicional</span>
+                                <strong>+0 BOB</strong>
+                            </label>
+                            <label class="snack-option">
+                                <span><input type="radio" name="snack" value="38"
+                                        data-snack="Combo Gamer 1 (Papas Cheddar + Monster)"> 🍟⚡ Combo Gamer 1: Papas
+                                    Cheddar + Monster</span>
+                                <strong>+38 BOB</strong>
+                            </label>
+                            <label class="snack-option">
+                                <span><input type="radio" name="snack" value="30"
+                                        data-snack="Combo Gamer 2 (Salchipapa + Speed)"> 🍟⚡ Combo Gamer 2: Salchipapa +
+                                    Speed</span>
+                                <strong>+30 BOB</strong>
+                            </label>
+                            <label class="snack-option">
+                                <span><input type="radio" name="snack" value="52"
+                                        data-snack="Combo Gamer 3 (Burger Doble + Papas + Red Bull)"> 🍔⚡ Combo Gamer 3:
+                                    Burger + Papas + Red Bull</span>
+                                <strong>+52 BOB</strong>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMPONENTE UI #4: RESUMEN DE PEDIDO EN LA MISMA PÁGINA -->
+                <div id="resumen" class="ui-box">
+                    <div class="ui-box-header">
+                        <h3>🧾 Resumen de Pedido</h3>
+                        <span class="ui-tag">Componente UI #4</span>
+                    </div>
+
+                    <ul class="resumen-list">
+                        <li>
+                            <span>Estación Seleccionada:</span>
+                            <strong id="res-estacion">Estación PS5</strong>
+                        </li>
+                        <li>
+                            <span>Tiempo de Juego:</span>
+                            <strong id="res-horas">1 Hora(s) x 40 BOB</strong>
+                        </li>
+                        <li>
+                            <span>Snack & Energizante:</span>
+                            <strong id="res-snack">Sin Snack (0 BOB)</strong>
+                        </li>
+                    </ul>
+
+                    <div class="total-banner">
+                        <h4>Total a Pagar:</h4>
+                        <div class="total-amount"><span id="total">40</span> BOB</div>
+                    </div>
+
+                    <!-- Mensaje de validación si faltan datos del jugador -->
+                    <div id="mensaje-error" class="msg-error"></div>
+
+                    <!-- Paso 1: Botón Reservar (Hace aparecer el Timer en la parte superior derecha) -->
+                    <button id="btnReservar" class="btn-iniciar-reserva">🕒 Reservar (Iniciar Timer 30s)</button>
+
+                    <!-- Paso 2: Botón Confirmar Reserva (Termina el Timer y confirma el pedido) -->
+                    <button id="btnModal" class="btn-confirmar">✅ Confirmar Reserva</button>
+
+                    <!-- Detalle confirmado dentro de la misma página -->
+                    <div id="reserva-confirmada-box" class="reserva-inline-box">
+                        <h4>✅ Detalle de Reserva Registrada</h4>
+                        <div><strong>Jugador:</strong> <span id="conf-jugador">-</span></div>
+                        <div><strong>Servicio:</strong> <span id="conf-servicio">-</span></div>
+                        <div><strong>Snack Gamer:</strong> <span id="conf-snack">-</span></div>
+                        <div><strong>Monto Total:</strong> <span id="conf-monto">-</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MÓDULO SEMANAS 2 Y 3: CASCADA 3 CAPAS, COLA TÁCTIL ANTI-XSS Y BITÁCORA -->
+        <section id="modulo-arcade-semanas" class="modulo-semanas-grid">
+            <div class="arcade-panel-card">
+                <h3>🔬 Recomendador de Estación (Cascada 3 Capas)</h3>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <select id="arcadeCascadaCat" style="padding:10px; border-radius:8px; min-height:44px;">
+                        <option value="">1. Elige Plataforma</option>
+                        <option value="ps5">PlayStation 5 / VR2</option>
+                        <option value="pc">PC Gamer 240Hz</option>
+                        <option value="retro">Cabinas Arcade Retro</option>
+                    </select>
+                    <select id="arcadeCascadaSub" disabled style="padding:10px; border-radius:8px; min-height:44px;">
+                        <option value="">2. Primero elige plataforma</option>
+                    </select>
+                    <div id="arcadeCascadaRes"
+                        style="display:none; padding:10px; border-radius:8px; background:rgba(16,185,129,0.15); color:#10b981; font-weight:700;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="arcade-panel-card">
+                <h3>🛡️ Cola de Turnos Táctil (Anti-XSS .text())</h3>
+                <div style="display:flex; gap:8px; margin-bottom:10px;">
+                    <input type="text" id="arcadeInputCola" placeholder="Ej: Mesa PS5 - Grupo Alfa"
+                        style="flex:1; min-width:0; padding:10px; border-radius:8px;">
+                    <button type="button" id="arcadeBtnAgregarCola" class="btn-tactil"
+                        style="background:#7c3aed; color:#fff; padding:0 14px;">+</button>
+                    <button type="button" id="arcadeBtnTestXss" class="btn-tactil"
+                        style="background:#ef4444; color:#fff; padding:0 10px;">XSS</button>
+                </div>
+                <div id="arcadeColaLista"
+                    style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto;">
+                    <div class="fila-tactil">
+                        <span class="titulo-truncado">Cabina PS5 Pro — Reserva Demo</span>
+                        <button type="button" class="btn-tactil btn-quitar-arcade"
+                            style="background:#fee2e2; color:#dc2626;">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arcade-panel-card">
+                <h3>📡 Bitácora de Eventos JS</h3>
+                <div id="arcadeLogOutput" class="log-arcade">
+                    <div>[Sistema] LevelUp Arcade Bar listo. Doble clic en una estación para marcar favorita.</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            Diseño Web II — Proyecto Integrador Jueves (C2-A1) & Viernes (C2-A2) • Ing. Miguel Angel Cruz Ramos • UPDS
+            2026
+        </footer>
+    </div>
+
+    <!-- =========================================================
+         SCRIPTS JQUERY (JUEVES C2-A1 + VIERNES C2-A2)
+         ========================================================= -->
+</body>
+
+</html>

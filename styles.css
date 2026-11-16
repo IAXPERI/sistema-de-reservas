@@ -1,0 +1,897 @@
+        /* =========================================================
+           VARIABLES DE TEMA: MODO CLARO Y MODO OSCURO
+           ========================================================= */
+        :root {
+            --bg-body: #f1f5f9;
+            --bg-container: #ffffff;
+            --bg-card: #f8fafc;
+            --bg-panel: #f1f5f9;
+            --bg-navbar: #1e1b4b;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #cbd5e1;
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --accent-light: rgba(124, 58, 237, 0.12);
+            --card-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+        }
+
+        body.dark-mode {
+            --bg-body: #090d16;
+            --bg-container: #131c31;
+            --bg-card: #1e293b;
+            --bg-panel: #0f172a;
+            --bg-navbar: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --accent-light: rgba(139, 92, 246, 0.2);
+            --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100dvh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* =========================================================
+           COMPONENTE UI #1: NAVBAR SUPERIOR + TIMER ARRIBA A LA DERECHA
+           ========================================================= */
+        .navbar {
+            background: var(--bg-navbar);
+            color: #ffffff;
+            padding: 14px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #7c3aed;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-top {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-area h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #6ee7b7;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* Temporizador en la Parte Superior Derecha (Oculto al inicio hasta apretar Reservar) */
+        .top-right-timer {
+            display: none;
+            background: #f59e0b;
+            color: #0f172a;
+            border: 2px solid #fbbf24;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            font-family: 'Consolas', monospace;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.45);
+        }
+
+        /* Botón Modo Oscuro */
+        .btn-theme {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-theme:hover {
+            background: #7c3aed;
+            border-color: #a78bfa;
+        }
+
+        /* Botón Menú Hamburguesa */
+        .btn-hamburger {
+            background: #7c3aed;
+            color: #ffffff;
+            border: none;
+            padding: 8px 13px;
+            border-radius: 8px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            line-height: 1;
+            transition: background 0.2s ease;
+        }
+
+        .btn-hamburger:hover {
+            background: #6d28d9;
+        }
+
+        /* Menú Desplegable de la Hamburguesa */
+        .nav-menu {
+            display: none;
+            max-width: 1180px;
+            margin: 12px auto 0 auto;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-menu a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            display: inline-block;
+            transition: background 0.2s ease;
+        }
+
+        .nav-menu a:hover {
+            background: #7c3aed;
+            color: #ffffff;
+        }
+
+        /* =========================================================
+           CONTENEDOR PRINCIPAL Y APARTADO DE PROMOCIONES ROTATIVAS
+           ========================================================= */
+        .main-wrapper {
+            max-width: 1180px;
+            margin: 28px auto;
+            padding: 0 20px 40px 20px;
+        }
+
+        .hero-banner {
+            background: var(--bg-container);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .hero-banner h2 {
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+        }
+
+        .hero-banner p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Apartado de Promociones que cambian cada 2 minutos */
+        .promos-section {
+            background: var(--bg-container);
+            border: 2px solid #f59e0b;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+
+        .promos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .promos-header h3 {
+            font-size: 1.15rem;
+            color: #f59e0b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .promo-timer-badge {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid #f59e0b;
+            color: #fbbf24;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            font-family: 'Consolas', monospace;
+        }
+
+        body:not(.dark-mode) .promo-timer-badge {
+            color: #b45309;
+        }
+
+        .promo-slide {
+            display: none;
+            background: var(--bg-card);
+            border-left: 5px solid #f59e0b;
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+
+        .promo-slide.active-promo {
+            display: block;
+        }
+
+        .promo-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .promo-info h4 {
+            font-size: 1.15rem;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        .promo-info p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .promo-price-box {
+            text-align: right;
+        }
+
+        .promo-price {
+            display: inline-block;
+            background: #10b981;
+            color: #0f172a;
+            font-weight: 800;
+            font-size: 1rem;
+            padding: 7px 14px;
+            border-radius: 8px;
+        }
+
+        .promos-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .promo-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .promo-dot {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .promo-dot.active {
+            background: #f59e0b;
+            color: #0f172a;
+            border-color: #f59e0b;
+        }
+
+        /* Botones de Filtro (.btn-console) */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .btn-console {
+            background: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-console:hover,
+        .btn-console.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+
+        /* Layout de Columnas: Catálogo (Izquierda) + Calculador y Resumen (Derecha) */
+        .ui-architecture-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 920px) {
+            .ui-architecture-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ui-box {
+            background: var(--bg-container);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 24px;
+        }
+
+        .ui-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .ui-box-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .ui-tag {
+            font-size: 0.74rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        /* =========================================================
+           COMPONENTE UI #2: CATÁLOGO EN TARJETAS + ACORDEÓN JUEVES
+           ========================================================= */
+        .equipo-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--accent);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 16px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .equipo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .equipo-card.snacks {
+            border-left-color: #f59e0b;
+        }
+
+        .equipo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .console-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .console-badge.badge-pc {
+            background: #0284c7;
+        }
+
+        .console-badge.badge-arcade {
+            background: #e11d48;
+        }
+
+        .console-badge.badge-food {
+            background: #d97706;
+        }
+
+        .equipo-info h4 {
+            font-size: 1.12rem;
+            margin-bottom: 4px;
+        }
+
+        .equipo-info p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        /* Botón Acordeón "Ver Detalles" (Jueves) */
+        .accordion-btn {
+            background: var(--accent-light);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 14px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        body.dark-mode .accordion-btn {
+            color: #ddd6fe;
+        }
+
+        .accordion-btn:hover {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        /* Botón "Alquilar Hora" (Viernes) */
+        .btn-alquilar {
+            background: #10b981;
+            color: #0f172a;
+            border: none;
+            padding: 8px 14px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-alquilar:hover {
+            background: #34d399;
+        }
+
+        /* Panel Desplegable Acordeón */
+        .accordion-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+
+        .panel-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #0284c7;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        body.dark-mode .panel-title {
+            color: #38bdf8;
+        }
+
+        .specs-list {
+            list-style: none;
+            margin-bottom: 12px;
+            font-size: 0.88rem;
+        }
+
+        .specs-list li {
+            padding: 4px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .price-tag {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .menu-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid #f59e0b;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.84rem;
+        }
+
+        .menu-item h5 {
+            color: #d97706;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        body.dark-mode .menu-item h5 {
+            color: #fbbf24;
+        }
+
+        /* =========================================================
+           COMPONENTE UI #3: CALCULADOR / FORMULARIO Y PANEL SNACKS
+           ========================================================= */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.86rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+        }
+
+        /* Selector visual de Snacks Laterales (Combo Gamer 1, 2 o 3) */
+        .snack-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .snack-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.86rem;
+            transition: all 0.2s ease;
+        }
+
+        .snack-option:hover,
+        .snack-option.selected {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.12);
+        }
+
+        /* =========================================================
+           COMPONENTE UI #4: RESUMEN DE PEDIDO Y CONFIRMACIÓN EN LA MISMA PÁGINA
+           ========================================================= */
+        .resumen-list {
+            list-style: none;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        .resumen-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .total-banner {
+            background: var(--bg-panel);
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .total-banner h4 {
+            font-size: 1.15rem;
+        }
+
+        .total-amount {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #10b981;
+        }
+
+        /* Botón 1: Reservar (Activa el Timer en la esquina superior derecha) */
+        .btn-iniciar-reserva {
+            width: 100%;
+            background: #ea580c;
+            color: #ffffff;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background 0.2s ease;
+        }
+
+        .btn-iniciar-reserva:hover {
+            background: #f97316;
+        }
+
+        /* Botón 2: Confirmar Reserva (Termina el Timer y guarda la reserva) */
+        .btn-confirmar {
+            display: none;
+            width: 100%;
+            background: #10b981;
+            color: #0f172a;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-confirmar:hover {
+            background: #34d399;
+        }
+
+        .msg-error {
+            display: none;
+            margin-bottom: 12px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.86rem;
+            font-weight: 600;
+        }
+
+        body.dark-mode .msg-error {
+            color: #fca5a5;
+        }
+
+        /* Detalle de Reserva Confirmada en la misma página */
+        .reserva-inline-box {
+            display: none;
+            margin-top: 16px;
+            background: var(--bg-panel);
+            border: 1px solid #10b981;
+            border-left: 4px solid #10b981;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .reserva-inline-box h4 {
+            color: #10b981;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        /* =========================================================
+           TOAST ALERT FLOTANTE (ESQUINA SUPERIOR DERECHA)
+           ========================================================= */
+        .toast-alert {
+            display: none;
+            position: fixed;
+            top: 78px;
+            right: 24px;
+            z-index: 300;
+            background: #10b981;
+            color: #0f172a;
+            border: 2px solid #059669;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.84rem;
+            color: var(--text-muted);
+        }
+
+        /* =========================================================
+           BOT�N PWA + M�DULO ANTI-XSS, COLA T�CTIL Y BIT�CORA
+           ========================================================= */
+        .btn-pwa-link {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-theme,
+        .btn-hamburger,
+        .btn-console,
+        .btn-alquilar,
+        .accordion-btn,
+        #btnReservar,
+        #btnModal {
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .modulo-semanas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .arcade-panel-card {
+            background: var(--bg-container);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .arcade-panel-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+
+        .btn-tactil {
+            min-width: 44px;
+            min-height: 44px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fila-tactil {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-card);
+            min-height: 44px;
+        }
+
+        .titulo-truncado {
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .log-arcade {
+            background: #090d16;
+            color: #38bdf8;
+            font-family: monospace;
+            font-size: 0.8rem;
+            padding: 10px;
+            border-radius: 8px;
+            height: 170px;
+            overflow-y: auto;
+        }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            .navbar {
+                padding: 6px 16px;
+            }
+
+            .hero-banner {
+                padding: 14px;
+            }
+
+            .main-wrapper {
+                padding: 12px;
+            }
+        }
