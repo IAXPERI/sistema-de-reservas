@@ -191,14 +191,41 @@ $(document).ready(function () {
         logArcade('AUDITORIA_A11Y', `${zonas} etiquetas semánticas | sin alt: ${sinAlt}`);
     });
 
-    // Navegación desde el Dock Flexbox (.dock-acciones)
+    // Navegación por vistas mediante botones (sin scrolling largo)
+    function mostrarVistaEmpresa(destino) {
+        $('.dock-btn').removeClass('activo');
+        $('.hero-banner, #promociones, .filter-bar, .ui-architecture-grid, #catalogo, #calculador, #resumen, #modulo-arcade-semanas').hide();
+        $('.ui-architecture-grid').addClass('vista-unica');
+
+        if (!destino || destino === '#promociones') {
+            $('.hero-banner, #promociones').fadeIn(200);
+            $('.dock-btn[data-scroll="#promociones"]').addClass('activo');
+        } else if (destino === '#catalogo') {
+            $('.filter-bar, .ui-architecture-grid, #catalogo').fadeIn(200);
+            $('.equipo-card').show();
+            $('.dock-btn[data-scroll="#catalogo"]').addClass('activo');
+        } else if (destino === '#zona-snacks') {
+            $('.ui-architecture-grid, #catalogo').fadeIn(200);
+            $('.equipo-card').hide();
+            $('#zona-snacks').show();
+            $('#zona-snacks .accordion-panel').slideDown(200);
+            $('.dock-btn[data-scroll="#zona-snacks"]').addClass('activo');
+        } else if (destino === '#calculador' || destino === '#resumen') {
+            $('.ui-architecture-grid, #calculador, #resumen').fadeIn(200);
+            $('.dock-btn[data-scroll="#calculador"]').addClass('activo');
+        } else if (destino === '#bitacora-arcade' || destino === '#modulo-arcade-semanas') {
+            $('#modulo-arcade-semanas').fadeIn(200);
+            $('.dock-btn[data-scroll="#bitacora-arcade"]').addClass('activo');
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     $(document).off('click', '.dock-btn').on('click', '.dock-btn', function () {
         const destino = $(this).attr('data-scroll');
-        const $el = $(destino);
-        if ($el.length) {
-            $('html, body').animate({ scrollTop: $el.offset().top - 75 }, 350);
-        }
+        mostrarVistaEmpresa(destino);
     });
+
+    mostrarVistaEmpresa('#promociones');
 
     // ---------------------------------------------------------
     // 0. PROMOCIONES ROTATIVAS (CADA 2 MINUTOS = 120 SEGUNDOS)
@@ -242,8 +269,13 @@ $(document).ready(function () {
         $('#nav-menu').slideToggle('fast');
     });
 
-    $(document).off('click', '.nav-link').on('click', '.nav-link', function () {
+    $(document).off('click', '.nav-link').on('click', '.nav-link', function (e) {
+        const href = $(this).attr('href');
         $('#nav-menu').slideUp('fast');
+        if (href && href.startsWith('#')) {
+            e.preventDefault();
+            mostrarVistaEmpresa(href);
+        }
     });
 
     // ---------------------------------------------------------
@@ -279,9 +311,7 @@ $(document).ready(function () {
         $('#servicio').val(precio);
         actualizarCalculador();
         renderizarDetalleSeguro(`<strong>Estación seleccionada:</strong> ${estacion} (${precio} BOB/hr) — Sanitizado con DOMPurify`);
-        $('html, body').animate({
-            scrollTop: $('#calculador').offset().top - 80
-        }, 400);
+        mostrarVistaEmpresa('#calculador');
         logArcade('ALQUILAR_SELECCION', `${estacion} (${precio} BOB/hr)`);
     });
 

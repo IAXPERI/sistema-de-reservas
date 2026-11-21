@@ -990,8 +990,15 @@
             cursor: pointer;
         }
 
-        .dock-btn:hover {
-            background: #7c3aed;
+        .dock-btn:hover,
+        .dock-btn.activo {
+            background: #7c3aed !important;
+            color: #ffffff !important;
+            border-color: #a78bfa !important;
+        }
+
+        .ui-architecture-grid.vista-unica {
+            grid-template-columns: 1fr;
         }
 
         /* PC o Celular Girado en Horizontal (Landscape): barra de iconos a la izquierda */
