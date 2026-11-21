@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180">
+  <defs>
+    <linearGradient id="snkbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#451a03"/>
+      <stop offset="55%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="180" rx="12" fill="url(#snkbg)"/>
+  <!-- Burger -->
+  <path d="M46 84 C46 58, 126 58, 126 84 Z" fill="#f59e0b"/>
+  <rect x="44" y="86" width="84" height="8" rx="4" fill="#22c55e"/>
+  <rect x="44" y="96" width="84" height="12" rx="4" fill="#78350f"/>
+  <rect x="46" y="110" width="80" height="14" rx="6" fill="#f59e0b"/>
+  <!-- Lata Energy -->
+  <rect x="148" y="54" width="38" height="72" rx="6" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
+  <path d="M167 68 L159 88 L168 88 L163 108 L176 84 L167 84 Z" fill="#22c55e"/>
+  <!-- Texto -->
+  <text x="200" y="76" fill="#ffffff" font-size="16" font-weight="900" font-family="'Segoe UI', sans-serif">SNACK BAR</text>
+  <text x="200" y="96" fill="#fef3c7" font-size="11" font-weight="700" font-family="'Segoe UI', sans-serif">Papas Cheddar</text>
+  <text x="200" y="112" fill="#fef3c7" font-size="11" font-weight="700" font-family="'Segoe UI', sans-serif">Burgers &amp; Energy</text>
+  <text x="200" y="132" fill="#86efac" font-size="12" font-weight="800" font-family="'Segoe UI', sans-serif">Combos desde 10 BOB</text>
+</svg>

@@ -1,0 +1,17 @@
+[
+  { "id": "EST-01", "titulo": "Estación PlayStation 5 (FC 26 / Tekken 8)", "categoria": "ps5", "detalle": "PS5 Slim 4K 120Hz • 4 DualSense", "precio": 40, "portada": "icons/icon-192.png" },
+  { "id": "EST-02", "titulo": "Estación PC Gamer Pro (Valorant / CS2 / Dota 2)", "categoria": "pc", "detalle": "Ryzen 7 + RTX 4070 Super • 240Hz", "precio": 25, "portada": "icons/icon-192.png" },
+  { "id": "EST-03", "titulo": "Cabina Arcade Fighting (KOF / Street Fighter)", "categoria": "arcade", "detalle": "Pandora Box DX Pro • 5000+ juegos", "precio": 15, "portada": "icons/icon-192.png" },
+  { "id": "PRM-01", "titulo": "Promo 1: Dúo Next-Gen PS5 + Monster & Papas", "categoria": "ps5", "detalle": "2h PS5 + Papas Cheddar + Monster", "precio": 118, "portada": "icons/icon-192.png" },
+  { "id": "PRM-02", "titulo": "Promo 2: Maratón eSports PC Gamer 240Hz", "categoria": "pc", "detalle": "3h PC RTX 4070 + Salchipapa + Speed", "precio": 105, "portada": "icons/icon-192.png" },
+  { "id": "PRM-03", "titulo": "Promo 3: Noche Retro Arcade & Burger LevelUp", "categoria": "arcade", "detalle": "2h Arcade + Burger Doble + Red Bull", "precio": 82, "portada": "icons/icon-192.png" },
+  { "id": "SNK-01", "titulo": "Combo Gamer 1: Papas Cheddar + Monster", "categoria": "snacks", "detalle": "Snack Bar • Entrega en Estación", "precio": 38, "portada": "icons/icon-192.png" },
+  { "id": "SNK-02", "titulo": "Combo Gamer 2: Salchipapa Especial + Speed", "categoria": "snacks", "detalle": "Snack Bar • Entrega en Estación", "precio": 30, "portada": "icons/icon-192.png" },
+  { "id": "SNK-03", "titulo": "Combo Gamer 3: Burger Doble + Papas + Red Bull", "categoria": "snacks", "detalle": "Snack Bar • Entrega en Estación", "precio": 52, "portada": "icons/icon-192.png" },
+  { "id": "SNK-04", "titulo": "Monster Energy (Original / Mango)", "categoria": "snacks", "detalle": "Bebida Energética • Lata 473ml", "precio": 18, "portada": "icons/icon-192.png" },
+  { "id": "SNK-05", "titulo": "Red Bull Lata 250ml", "categoria": "snacks", "detalle": "Bebida Energética", "precio": 20, "portada": "icons/icon-192.png" },
+  { "id": "SNK-06", "titulo": "Speed / Volt Gamer", "categoria": "snacks", "detalle": "Bebida Energética", "precio": 10, "portada": "icons/icon-192.png" },
+  { "id": "SNK-07", "titulo": "Papas Gamer Cheddar & Tocino", "categoria": "snacks", "detalle": "Papas & Snacks", "precio": 25, "portada": "icons/icon-192.png" },
+  { "id": "SNK-08", "titulo": "Nachos Supreme con Queso", "categoria": "snacks", "detalle": "Papas & Snacks", "precio": 28, "portada": "icons/icon-192.png" },
+  { "id": "SNK-09", "titulo": "Alitas BBQ (6 pzas + Papas)", "categoria": "snacks", "detalle": "Burgers & Alitas", "precio": 35, "portada": "icons/icon-192.png" }
+]
