@@ -1,444 +1,1288 @@
-﻿<!-- ej_jquery_jueves.html / ej_ui_viernes.html - Proyecto Integrador LevelUp Arcade Bar -->
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LevelUp Arcade Bar - UI Completa (Jueves & Viernes)</title>
-    <!-- Librería jQuery 3.7.1 -->
+    <meta name="theme-color" content="#0f294a">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Mi Página Personal — Aplicación Web Adaptable &amp; PWA</title>
+    <!-- Bootstrap CSS (Para el Carrusel y estructura base) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery 3.7.1 Oficial y DOMPurify 3.1.6 -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <!-- Nuestro archivo de estilos CSS propio -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Nuestro script de manipulación del DOM y Semanas 1-3 -->
     <script src="script.js" defer></script>
 </head>
-</head>
 
-<body class="dark-mode">
+<body>
 
-    <!-- =========================================================
-         COMPONENTE UI #1: NAVBAR SUPERIOR + TIMER EN PARTE SUPERIOR DERECHA
-         ========================================================= -->
-    <nav class="navbar">
-        <div class="navbar-top">
-            <div class="logo-area">
-                <h1>🕹️ LevelUp Arcade Bar</h1>
-                <span class="status-badge">🟢 Estaciones Disponibles</span>
-            </div>
+    <!-- ==========================================
+         1. NAVBAR CON MENÚ HAMBURGUESA DOM, BOTÓN INSTALAR PWA Y A11Y
+         ========================================== -->
+    <header class="barra-superior navbar-dom sticky-top">
+        <div class="container nav-top-bar">
+            <a class="navbar-brand fw-bold text-white text-decoration-none fs-4" href="#">Mi Perfil</a>
 
-            <div class="nav-controls">
-                <!-- Enlace a la PWA Móvil Cero-Scroll aparte -->
-                <a href="pwa.html" class="btn-pwa-link">📱 Vista Teléfono (PWA)</a>
+            <div class="acciones-header">
+                <span id="estadoRedPersonal" class="btn-toggle" style="background:#dcfce7; color:#15803d;">🟢 En Línea</span>
 
-                <!-- Temporizador en la Parte Superior Derecha (Aparece recién al apretar Reservar) -->
-                <div id="box-timer" class="top-right-timer">
-                    ⏱️ Tiempo para Confirmar: <span id="mod-timer">00:30s</span>
-                </div>
+                <!-- Botón PWA: visible solo cuando el navegador permite instalar y aún no está instalada -->
+                <button type="button" id="btnInstalarPWA" class="btn-toggle" hidden>📲 Instalar App</button>
 
-                <!-- Botón Modo Oscuro / Claro -->
-                <button id="btn-theme" class="btn-theme">☀️ Modo Claro</button>
+                <!-- Botones de Simulación Semana 3 -->
+                <button type="button" id="btnSimularContraste" class="btn-toggle" title="Simular Alto Contraste">👁️ Contraste</button>
+                <button type="button" id="btnSimularVista" class="btn-toggle" title="Simular Vista Móvil / Escritorio">📱 Móvil/PC</button>
+                <button type="button" id="btnAuditarA11Y" class="btn-toggle" title="Verificar Semántica HTML5">🔍 Semántica</button>
 
-                <!-- Botón Menú Hamburguesa -->
-                <button id="btn-hamburger" class="btn-hamburger" title="Abrir Menú">☰</button>
+                <!-- FUNCIÓN 1: Botón Modo Oscuro / Claro -->
+                <button id="themeBtn" class="btn-toggle" type="button">🌙 Cambiar Modo</button>
+
+                <!-- FUNCIÓN 3: Botón Menú Hamburguesa controlado por el DOM -->
+                <button id="burguerBtn" class="btn-burguer" type="button" aria-label="Abrir menú de navegación">☰ Menú Navegación</button>
             </div>
         </div>
 
-        <!-- Menú Desplegable Hamburguesa -->
-        <div id="nav-menu" class="nav-menu">
-            <ul>
-                <li><a href="#promociones" class="nav-link">🔥 Promociones Rotativas</a></li>
-                <li><a href="#catalogo" class="nav-link">🎮 Catálogo de Estaciones</a></li>
-                <li><a href="#zona-snacks" class="nav-link">🍟 Comida y Bebidas Energéticas</a></li>
-                <li><a href="#calculador" class="nav-link">🧮 Calculador de Horas</a></li>
-                <li><a href="#resumen" class="nav-link">🧾 Resumen de Pedido</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Toast Alert Flotante (Esquina Superior Derecha) -->
-    <div id="toast-alert" class="toast-alert"></div>
-
-    <div class="main-wrapper">
-
-        <!-- Encabezado Principal -->
-        <div class="hero-banner">
-            <div>
-                <h2>Panel de Estaciones Gamer, Snack Bar & Reservas</h2>
-                <p>Diseño Web II (C2-A1 & C2-A2) • Acordeones jQuery, Promociones Rotativas y Reserva Directa</p>
-            </div>
+        <div class="container">
+            <p id="reporteA11Y" role="status" aria-live="polite" class="reporte-a11y">Estado: Listo para auditar.</p>
         </div>
 
-        <!-- =========================================================
-             APARTADO DE PROMOCIONES ROTATIVAS (CAMBIAN CADA 2 MINUTOS)
-             ========================================================= -->
-        <div id="promociones" class="promos-section">
-            <div class="promos-header">
-                <h3>🔥 Promociones Especiales Gamer (Rotación Automática)</h3>
-                <span class="promo-timer-badge">🔄 Próxima promoción en: <span id="promo-countdown">02:00</span></span>
+        <!-- Menú desplegable controlado con classList.toggle('show') -->
+        <nav id="navMenu" class="nav-menu container" aria-label="Navegación superior">
+            <a href="#carrusel">Inicio</a>
+            <a href="#pasatiempos">Pasatiempos e Intereses</a>
+            <a href="#horario">Horario (Sheets)</a>
+            <a href="#juegos">Juegos Favoritos</a>
+            <a href="#musica">Música Favorita</a>
+            <a href="#proyectos">Proyectos</a>
+            <a href="#frase">Frase</a>
+            <a href="#contratacion">Contratación</a>
+            <a href="#footer">Redes</a>
+        </nav>
+    </header>
+
+    <!-- ==========================================
+         2. CARRUSEL AUTOMÁTICO DE 3 FOTOS (Con Bootstrap)
+         ========================================== -->
+    <section id="carrusel" class="seccion-carrusel">
+        <div id="carruselTresFotos" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+            <!-- Indicadores inferiores para las 3 fotos -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carruselTresFotos" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Foto 1"></button>
+                <button type="button" data-bs-target="#carruselTresFotos" data-bs-slide-to="1"
+                    aria-label="Foto 2"></button>
+                <button type="button" data-bs-target="#carruselTresFotos" data-bs-slide-to="2"
+                    aria-label="Foto 3"></button>
             </div>
 
-            <!-- Promoción 1 -->
-            <div class="promo-slide active-promo" data-index="0">
-                <div class="promo-content">
-                    <div class="promo-info">
-                        <h4>🎮⚡ Promo 1: Dúo Next-Gen PS5 + Monster & Papas</h4>
-                        <p>Incluye 2 Horas en Estación PS5 (EA Sports FC 26 / Tekken 8) + Porción de Papas Cheddar + 1
-                            Monster Energy.</p>
+            <!-- Las 3 fotos del carrusel -->
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMPj_L1mVYVkKip49tSHwVi4DBIsQZjWgfcrEpr_aHnA&s=10"
+                        class="d-block w-100 img-carrusel" alt="Foto 1">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>Mi Mundo</h2>
                     </div>
-                    <div class="promo-price-box">
-                        <span class="promo-price">🔥 Oferta: 118 BOB</span>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKU6Y7RZfy6efY1t1mFFVnC5BmR6msFbdnlD_V6ieTsQ&s=10"
+                        class="d-block w-100 img-carrusel" alt="Foto 2">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>Pasatiempos</h2>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl84LKEyfvn9ktFBhe55hoHl2sNnfKYijzzbIIyJF0sQ&s=10"
+                        class="d-block w-100 img-carrusel" alt="Foto 3">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>Banda Favorita</h2>
                     </div>
                 </div>
             </div>
 
-            <!-- Promoción 2 -->
-            <div class="promo-slide" data-index="1">
-                <div class="promo-content">
-                    <div class="promo-info">
-                        <h4>💻🍟 Promo 2: Maratón eSports PC Gamer 240Hz</h4>
-                        <p>Incluye 3 Horas en PC Gamer Pro (RTX 4070 Super) + Salchipapa Especial LevelUp + Bebida
-                            Energética Speed.</p>
-                    </div>
-                    <div class="promo-price-box">
-                        <span class="promo-price">🔥 Oferta: 105 BOB</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Promoción 3 -->
-            <div class="promo-slide" data-index="2">
-                <div class="promo-content">
-                    <div class="promo-info">
-                        <h4>👾🍔 Promo 3: Noche Retro Arcade & Burger LevelUp</h4>
-                        <p>Incluye 2 Horas de Cabina Arcade Free-Play (KOF / Street Fighter) + Burger Doble Carne con
-                            Papas + Red Bull.</p>
-                    </div>
-                    <div class="promo-price-box">
-                        <span class="promo-price">🔥 Oferta: 82 BOB</span>
-                    </div>
-                </div>
-            </div>
+            <!-- Flechas de anterior y siguiente -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#carruselTresFotos"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carruselTresFotos"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
         </div>
+    </section>
 
-        <!-- Barra de Filtros (.btn-console) -->
-        <div class="filter-bar">
-            <button class="btn-console active" data-categoria="todos">✨ Todos los Servicios</button>
-            <button class="btn-console" data-categoria="ps5">🎮 Estación PS5</button>
-            <button class="btn-console" data-categoria="pc">💻 PC Gamer</button>
-            <button class="btn-console" data-categoria="arcade">👾 Cabina Arcade</button>
-            <button class="btn-console" data-categoria="snacks">🍔 Comida & Energizantes</button>
-        </div>
+    <!-- ==========================================
+         3. CONTENEDOR FLEXBOX RESPONSIVO (.contenedor-app)
+         ========================================== -->
+    <main class="contenedor-app">
+        <section class="area-contenido contenedor-principal">
 
-        <!-- =========================================================
-             ESTRUCTURA PRINCIPAL: CATÁLOGO + CALCULADOR + RESUMEN
-             ========================================================= -->
-        <div class="ui-architecture-grid">
-
-            <!-- COLUMNA IZQUIERDA: COMPONENTE UI #2 (CATÁLOGO EN TARJETAS) -->
-            <div id="catalogo" class="ui-box">
-                <div class="ui-box-header">
-                    <h3>🕹️ Catálogo en Tarjetas (Estaciones & Juegos)</h3>
-                    <span class="ui-tag">Componente UI #2</span>
-                </div>
-
-                <!-- Card 1: PS5 -->
-                <div class="equipo-card ps5">
-                    <div class="equipo-header">
-                        <div class="equipo-info">
-                            <span class="console-badge">PS5 • Next-Gen</span>
-                            <h4>🎮 Estación PlayStation 5 (EA Sports FC 26 / Tekken 8)</h4>
-                            <p>Juego competitivo o cooperativo local en resolución 4K nativa a 120Hz.</p>
-                        </div>
-                    </div>
-
-                    <div class="card-actions">
-                        <div class="accordion-btn">📌 Ver Detalles</div>
-                        <button class="btn-alquilar" data-estacion="Estación PS5" data-precio="40">⚡ Alquilar Hora (40
-                            BOB)</button>
-                    </div>
-
-                    <div class="accordion-panel" style="display:none;">
-                        <div class="panel-title">📋 Tarifa y Especificaciones del Equipo</div>
-                        <ul class="specs-list">
-                            <li><strong>Consola:</strong> PlayStation 5 Slim 1TB SSD NVMe</li>
-                            <li><strong>Pantalla:</strong> Smart TV OLED 55" 4K HDR10 @ 120Hz</li>
-                            <li><strong>Periféricos:</strong> 4 Mandos DualSense + Headsets Pulse 3D</li>
-                            <li><strong>Juegos:</strong> EA Sports FC 26, Tekken 8, Mortal Kombat 1, Spider-Man 2</li>
-                        </ul>
-                        <div class="price-tag">💰 Tarifa: 40 BOB / hora (Incluye equipamiento completo)</div>
-                    </div>
-                </div>
-
-                <!-- Card 2: PC Gamer -->
-                <div class="equipo-card pc">
-                    <div class="equipo-header">
-                        <div class="equipo-info">
-                            <span class="console-badge badge-pc">PC GAMER • eSports</span>
-                            <h4>💻 Estación PC Gamer Pro (Valorant / CS2 / Dota 2)</h4>
-                            <p>Equipos de alto rendimiento con monitores de 240Hz para torneos.</p>
-                        </div>
-                    </div>
-
-                    <div class="card-actions">
-                        <div class="accordion-btn">📌 Ver Detalles</div>
-                        <button class="btn-alquilar" data-estacion="PC Gamer Pro" data-precio="25">⚡ Alquilar Hora (25
-                            BOB)</button>
-                    </div>
-
-                    <div class="accordion-panel" style="display:none;">
-                        <div class="panel-title">📋 Tarifa y Especificaciones del Equipo</div>
-                        <ul class="specs-list">
-                            <li><strong>Hardware:</strong> AMD Ryzen 7 7800X3D + NVIDIA RTX 4070 Super 12GB</li>
-                            <li><strong>Memoria & Monitor:</strong> 32GB RAM DDR5 • Monitor IPS 27" 240Hz 1ms</li>
-                            <li><strong>Periféricos:</strong> Teclado Mecánico RGB + Mouse Logitech G Pro Superlight
-                            </li>
-                            <li><strong>Juegos:</strong> Valorant, Counter-Strike 2, Dota 2, League of Legends, Fortnite
-                            </li>
-                        </ul>
-                        <div class="price-tag">💰 Tarifa: 25 BOB / hora</div>
-                    </div>
-                </div>
-
-                <!-- Card 3: Arcade -->
-                <div class="equipo-card arcade">
-                    <div class="equipo-header">
-                        <div class="equipo-info">
-                            <span class="console-badge badge-arcade">ARCADE • Retro</span>
-                            <h4>👾 Cabina Arcade Fighting (King of Fighters / Street Fighter)</h4>
-                            <p>Máquina multijuegos para 2 jugadores con palancas y botones Sanwa.</p>
-                        </div>
-                    </div>
-
-                    <div class="card-actions">
-                        <div class="accordion-btn">📌 Ver Detalles</div>
-                        <button class="btn-alquilar" data-estacion="Cabina Arcade" data-precio="15">⚡ Alquilar Hora (15
-                            BOB)</button>
-                    </div>
-
-                    <div class="accordion-panel" style="display:none;">
-                        <div class="panel-title">📋 Tarifa y Especificaciones del Equipo</div>
-                        <ul class="specs-list">
-                            <li><strong>Sistema:</strong> Cabina Arcade con Pandora Box DX Pro (5000+ juegos)</li>
-                            <li><strong>Controles:</strong> Palancas japonesas Sanwa JLF + 8 botones por jugador</li>
-                            <li><strong>Clásicos:</strong> KOF '98 y 2002, Street Fighter III, Metal Slug X, Pac-Man
-                            </li>
-                        </ul>
-                        <div class="price-tag">💰 Tarifa: 15 BOB / hora (Free Play ilimitado)</div>
-                    </div>
-                </div>
-
-                <!-- Card 4: Zona de Comida y Bebidas Energéticas -->
-                <div id="zona-snacks" class="equipo-card snacks">
-                    <div class="equipo-header">
-                        <div class="equipo-info">
-                            <span class="console-badge badge-food">SNACK & ENERGY BAR</span>
-                            <h4>🍟 Zona de Comida, Papas Fritas y Bebidas Energéticas</h4>
-                            <p>Papas con cheddar, hamburguesas, nachos, Monster Energy y Red Bull directo a tu estación.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="card-actions">
-                        <div class="accordion-btn">📌 Ver Detalles</div>
-                    </div>
-
-                    <div class="accordion-panel" style="display:none;">
-                        <div class="panel-title">⚡ Carta de Bebidas Energéticas y Comida Gamer</div>
-                        <div class="menu-grid">
-                            <div class="menu-item">
-                                <h5>⚡ Bebidas Energéticas</h5>
-                                <p>• Monster Energy (Original / Mango): <strong>18 BOB</strong><br>
-                                    • Red Bull Lata 250ml: <strong>20 BOB</strong><br>
-                                    • Speed / Volt Gamer: <strong>10 BOB</strong></p>
-                            </div>
-                            <div class="menu-item">
-                                <h5>🍟 Papas & Snacks</h5>
-                                <p>• Papas Gamer Cheddar & Tocino: <strong>25 BOB</strong><br>
-                                    • Salchipapa Especial LevelUp: <strong>25 BOB</strong><br>
-                                    • Nachos Supreme con Queso: <strong>28 BOB</strong></p>
-                            </div>
-                            <div class="menu-item">
-                                <h5>🍔 Burgers & Alitas</h5>
-                                <p>• Burger Doble Carne + Papas: <strong>38 BOB</strong><br>
-                                    • Alitas BBQ (6 pzas + Papas): <strong>35 BOB</strong></p>
-                            </div>
-                        </div>
-                        <div class="price-tag">🔥 Selecciona tu Combo Gamer en el panel calculador de la derecha</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- COLUMNA DERECHA: COMPONENTE UI #3 (CALCULADOR) Y COMPONENTE UI #4 (RESUMEN) -->
-            <div>
-
-                <!-- COMPONENTE UI #3: CALCULADOR / FORMULARIO + PANEL LATERAL SNACKS -->
-                <div id="calculador" class="ui-box">
-                    <div class="ui-box-header">
-                        <h3>🧮 Calculador & Reserva</h3>
-                        <span class="ui-tag">Componente UI #3</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="nombre">👤 Nombre del Jugador:</label>
-                        <input type="text" id="nombre" placeholder="Ej. Carlos Mendoza">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="celular">📱 Celular / WhatsApp (8 dígitos):</label>
-                        <input type="text" id="celular" maxlength="8" placeholder="Ej. 71234567">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="servicio">🎮 Estación de Juego:</label>
-                        <select id="servicio">
-                            <option value="40" data-nombre="Estación PS5">🎮 Estación PS5 (40 BOB/hr)</option>
-                            <option value="25" data-nombre="PC Gamer Pro">💻 PC Gamer Pro (25 BOB/hr)</option>
-                            <option value="15" data-nombre="Cabina Arcade">👾 Cabina Arcade (15 BOB/hr)</option>
-                        </select>
-                    </div>
-
-                    <!-- Input requerido por la Guía Viernes (#hrs) -->
-                    <div class="form-group">
-                        <label for="hrs">⏱️ Horas de Reserva (1 a 8 hrs):</label>
-                        <input type="number" id="hrs" value="1" min="1" max="8">
-                    </div>
-
-                    <!-- Panel UI Lateral: Selector de Snacks (Combo Gamer 1, 2 o 3) -->
-                    <div class="form-group">
-                        <label>🍟 Selector de Snacks & Bebidas Energéticas:</label>
-                        <div class="snack-selector">
-                            <label class="snack-option selected">
-                                <span><input type="radio" name="snack" value="0" data-snack="Sin Snack" checked> Sin
-                                    Snack Adicional</span>
-                                <strong>+0 BOB</strong>
-                            </label>
-                            <label class="snack-option">
-                                <span><input type="radio" name="snack" value="38"
-                                        data-snack="Combo Gamer 1 (Papas Cheddar + Monster)"> 🍟⚡ Combo Gamer 1: Papas
-                                    Cheddar + Monster</span>
-                                <strong>+38 BOB</strong>
-                            </label>
-                            <label class="snack-option">
-                                <span><input type="radio" name="snack" value="30"
-                                        data-snack="Combo Gamer 2 (Salchipapa + Speed)"> 🍟⚡ Combo Gamer 2: Salchipapa +
-                                    Speed</span>
-                                <strong>+30 BOB</strong>
-                            </label>
-                            <label class="snack-option">
-                                <span><input type="radio" name="snack" value="52"
-                                        data-snack="Combo Gamer 3 (Burger Doble + Papas + Red Bull)"> 🍔⚡ Combo Gamer 3:
-                                    Burger + Papas + Red Bull</span>
-                                <strong>+52 BOB</strong>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- COMPONENTE UI #4: RESUMEN DE PEDIDO EN LA MISMA PÁGINA -->
-                <div id="resumen" class="ui-box">
-                    <div class="ui-box-header">
-                        <h3>🧾 Resumen de Pedido</h3>
-                        <span class="ui-tag">Componente UI #4</span>
-                    </div>
-
-                    <ul class="resumen-list">
-                        <li>
-                            <span>Estación Seleccionada:</span>
-                            <strong id="res-estacion">Estación PS5</strong>
-                        </li>
-                        <li>
-                            <span>Tiempo de Juego:</span>
-                            <strong id="res-horas">1 Hora(s) x 40 BOB</strong>
-                        </li>
-                        <li>
-                            <span>Snack & Energizante:</span>
-                            <strong id="res-snack">Sin Snack (0 BOB)</strong>
-                        </li>
+        <!-- A) PASATIEMPOS (NO PRODUCTIVO) E INTERESES (PRODUCTIVO) -->
+        <section id="pasatiempos" class="seccion-bloque">
+            <h2 class="titulo-seccion">Sobre Mí</h2>
+            <div class="grid-dos-columnas">
+                <!-- Pasatiempos (No Productivo) -->
+                <article class="tarjeta">
+                    <div class="etiqueta-tipo no-productivo">No Productivo</div>
+                    <h3>Pasatiempos</h3>
+                    <p>Actividades que hago en mi tiempo libre para relajarme y divertirme:</p>
+                    <ul class="lista-personalizada">
+                        <li>Jugar videojuegos con amigos los fines de semana.</li>
+                        <li>Ver series, anime o películas de ciencia ficción.</li>
+                        <li>Escuchar música y descubrir nuevas playlists.</li>
+                        <li>Salir a caminar o pasar el rato en redes sociales.</li>
                     </ul>
+                </article>
 
-                    <div class="total-banner">
-                        <h4>Total a Pagar:</h4>
-                        <div class="total-amount"><span id="total">40</span> BOB</div>
+                <!-- Intereses (Productivo) -->
+                <article class="tarjeta">
+                    <div class="etiqueta-tipo productivo">Productivo</div>
+                    <h3>Intereses</h3>
+                    <p>Actividades en las que me enfoco para aprender y crecer:</p>
+                    <ul class="lista-personalizada">
+                        <li>Aprender programación y diseño web (HTML, CSS, JavaScript).</li>
+                        <li>Mejorar mis hábitos de estudio y organización.</li>
+                        <li>Practicar deporte o hacer ejercicio regularmente.</li>
+                        <li>Aprender un nuevo idioma o habilidad técnica.</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <!-- B) HORARIO (INFALTABLES DIARIOS - SHEETS) -->
+        <section id="horario" class="seccion-bloque">
+            <h2 class="titulo-seccion">Horario </h2>
+            <p class="descripcion-seccion">Mi rutina diaria organizada en Google Sheets.</p>
+
+            <div class="contenedor-iframe-sheets">
+                <iframe
+                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQv_Za2WpkiAMMA-pn5YumT0LbBhuPd7JCl9rtfQpuyn095lwY_bxq2asX9krhcntFvoDAKFX39E_Mh/pubhtml?widget=true&amp;headers=false"
+                    width="100%" height="420" frameborder="0"></iframe>
+            </div>
+        </section>
+
+        <!-- C.1) APARTADO DE JUEGOS FAVORITOS (2 DESPLEGABLES CON EL DOM: GÉNERO -> JUEGO -> LOGROS E HISTORIA) -->
+        <section id="juegos" class="seccion-bloque">
+            <h2 class="titulo-seccion">Juegos Favoritos </h2>
+            <p class="descripcion-seccion">
+                <strong>Desplegable 1 (Por Género):</strong> Haz clic en un género para desplegar los videojuegos que
+                juego en esa categoría.<br>
+                <strong>Desplegable 2 (Logros e Información):</strong> Haz clic sobre cualquier videojuego para
+                desplegar mis <strong>logros alcanzados, rango y detalles</strong>.
+            </p>
+
+            <!-- DESPLEGABLE 1: Botones de Géneros de Videojuegos -->
+            <div class="botones-filtro" id="botonesJuegos">
+                <button class="btn-filtro" onclick="filtrarSeccion('juegos', 'lucha', this)">Lucha & Artes Marciales
+                    (2)</button>
+                <button class="btn-filtro" onclick="filtrarSeccion('juegos', 'shooter', this)">Shooters & Battle Royale
+                    (3)</button>
+                <button class="btn-filtro" onclick="filtrarSeccion('juegos', 'mundo-abierto', this)">Mundo Abierto, RPG
+                    & Supervivencia (4)</button>
+                <button class="btn-filtro" onclick="filtrarSeccion('juegos', 'todos', this)">Ver Todos (9)</button>
+            </div>
+
+            <p id="aviso-juegos" class="aviso-desplegable">Selecciona un género arriba para desplegar los videojuegos.
+            </p>
+
+            <!-- DESPLEGABLE 2: Tarjetas de Videojuegos (Ocultas al inicio, se despliegan por JS al elegir género y al hacer clic en cada juego) -->
+            <div class="grid-tarjetas-filtro contenedor-colapsado" id="lista-juegos">
+
+                <!-- ================= LUCHA & ARTES MARCIALES ================= -->
+                <div class="card-filtro card card-interactiva" data-categoria="lucha" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Lucha 3D Competitiva</span>
+                        <span class="icono-desplegar">▼ Ver mis logros</span>
                     </div>
+                    <h4>Tekken 8</h4>
+                    <p class="sub-info"><strong>Tiempo de juego:</strong> +500 Horas | <strong>Rango Máximo:</strong>
+                        God of Destruction II</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Mis Logros y Récord Personal:</strong> Acumulé más de <strong>500 horas de
+                                juego</strong> dedicadas al competitivo y alcancé el rango <strong>God of Destruction
+                                II</strong>, uno de los rangos más altos y exclusivos a nivel mundial. Dominé la
+                            ejecución de combos óptimos, el sistema agresivo <em>Heat</em>, castigos por <em>frame
+                                data</em> y lectura de rivales en partidas clasificatorias de máxima exigencia.</p>
+                        <p class="mt-2"><strong>Sobre el Juego:</strong> Octava entrega de la saga de Bandai Namco en
+                            Unreal Engine 5 que enfrenta a Jin Kazama y Kazuya Mishima en el clímax de la saga Mishima.
+                        </p>
+                    </div>
+                </div>
 
-                    <!-- Mensaje de validación si faltan datos del jugador -->
-                    <div id="mensaje-error" class="msg-error"></div>
+                <div class="card-filtro card card-interactiva" data-categoria="lucha" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Artes Marciales / Beat 'em up</span>
+                        <span class="icono-desplegar">▼ Ver mis logros</span>
+                    </div>
+                    <h4>Sifu</h4>
+                    <p class="sub-info"><strong>Récord:</strong> Completado con 20 años (Sin perder vidas) |
+                        <strong>Final:</strong> Final Secreto (Wude)
+                    </p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Mis Logros y Récord Personal:</strong> Me pasé el juego completando toda la historia
+                            terminando con exactamente <strong>20 años de edad sin perder una sola vida (Deathless
+                                Run)</strong> en toda la partida. Además, conseguí sacar el <strong>Final Secreto y
+                                Verdadero (Wude)</strong>, que es el reto más difícil del juego porque exige romper la
+                            barra de estructura de cada uno de los 5 jefes dos veces consecutivas para
+                            <strong>perdonarles la vida</strong> sin matarlos, requiriendo precisión absoluta en
+                            esquivas y parries.
+                        </p>
+                        <p class="mt-2"><strong>Sobre el Juego:</strong> Título de Kung-Fu Pak Mei donde cada muerte te
+                            envejece mediante un talismán mágico mientras buscas justicia contra los cinco asesinos de
+                            tu maestro.</p>
+                    </div>
+                </div>
 
-                    <!-- Paso 1: Botón Reservar (Hace aparecer el Timer en la parte superior derecha) -->
-                    <button id="btnReservar" class="btn-iniciar-reserva">🕒 Reservar (Iniciar Timer 30s)</button>
+                <!-- ================= SHOOTERS & BATTLE ROYALE ================= -->
+                <div class="card-filtro card card-interactiva" data-categoria="shooter" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Battle Royale / Hero Shooter</span>
+                        <span class="icono-desplegar">▼ Ver mis logros</span>
+                    </div>
+                    <h4>Apex Legends</h4>
+                    <p class="sub-info"><strong>Rango:</strong> 4x Diamante Consecutivo | <strong>Main:</strong>
+                        Pathfinder</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Mis Logros y Récord Personal:</strong> Llegué al rango <strong>Diamante en 4
+                                ocasiones consecutivas</strong> jugando principalmente con <strong>Pathfinder</strong>.
+                            Dominé las mecánicas avanzadas del gancho (<em>Grappling Hook slingshots</em>), creación de
+                            rotaciones estratégicas con tirolina para el escuadrón y toma de altura en <em>lobbies</em>
+                            clasificatorios de alto nivel.</p>
+                        <p class="mt-2"><strong>Sobre el Juego:</strong> Battle Royale frenético por escuadrones de
+                            Respawn Entertainment ambientado en el universo de <em>Titanfall</em>.</p>
+                    </div>
+                </div>
 
-                    <!-- Paso 2: Botón Confirmar Reserva (Termina el Timer y confirma el pedido) -->
-                    <button id="btnModal" class="btn-confirmar">✅ Confirmar Reserva</button>
+                <div class="card-filtro card card-interactiva" data-categoria="shooter" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Hero Shooter Táctico 5v5</span>
+                        <span class="icono-desplegar">▼ Ver mis logros</span>
+                    </div>
+                    <h4>Overwatch 2</h4>
+                    <p class="sub-info"><strong>Recompensas:</strong> Drives y Banners de Temporada conseguidos</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Mis Logros y Récord Personal:</strong> Conseguí completar los <strong>Drives de
+                                Temporada (Competitive Drives)</strong> y desbloquear los <strong>Banners / Firmas de
+                                Temporada</strong> exclusivos del modo competitivo, logrando rachas de victorias
+                            sostenidas en partidas clasificatorias por roles bajo presión.</p>
+                        <p class="mt-2"><strong>Sobre el Juego:</strong> Shooter competitivo por equipos 5v5 de Blizzard
+                            donde la sinergia de habilidades definitivas y el control de objetivos definen cada partida.
+                        </p>
+                    </div>
+                </div>
 
-                    <!-- Detalle confirmado dentro de la misma página -->
-                    <div id="reserva-confirmada-box" class="reserva-inline-box">
-                        <h4>✅ Detalle de Reserva Registrada</h4>
-                        <div><strong>Jugador:</strong> <span id="conf-jugador">-</span></div>
-                        <div><strong>Servicio:</strong> <span id="conf-servicio">-</span></div>
-                        <div><strong>Snack Gamer:</strong> <span id="conf-snack">-</span></div>
-                        <div><strong>Monto Total:</strong> <span id="conf-monto">-</span></div>
+                <div class="card-filtro card card-interactiva" data-categoria="shooter" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">FPS Bélico Histórico</span>
+                        <span class="icono-desplegar">▼ Ver mis logros</span>
+                    </div>
+                    <h4>Battlefield 1</h4>
+                    <p class="sub-info"><strong>Estado:</strong> Campaña e Historias de Guerra completadas</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Mis Logros y Récord Personal:</strong> Me pasé el juego completo superando todas las
+                            <strong>Historias de Guerra</strong> en los distintos frentes de la Primera Guerra Mundial:
+                            desde los combates de tanques en Francia y batallas aéreas sobre los Alpes hasta el desierto
+                            de Arabia y Galípoli, dominando infantería y vehículos.
+                        </p>
+                        <p class="mt-2"><strong>Sobre el Juego:</strong> Aclamado shooter en primera persona de DICE
+                            ambientado en la Gran Guerra con escenarios destructibles y gran realismo histórico.</p>
+                    </div>
+                </div>
+
+                <!-- ================= MUNDO ABIERTO, RPG & SUPERVIVENCIA ================= -->
+                <div class="card-filtro card card-interactiva" data-categoria="mundo-abierto"
+                    onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Supervivencia / Mundo Abierto</span>
+                        <span class="icono-desplegar">▼ Ver mis logros</span>
+                    </div>
+                    <h4>ARK: Survival Evolved</h4>
+                    <p class="sub-info"><strong>Tiempo de juego:</strong> +200 Horas | <strong>Dificultad:</strong>
+                        Máxima Dificultad Completada</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Mis Logros y Récord Personal:</strong> Con más de <strong>200 horas de
+                                juego</strong>, logré pasarme ARK en la <strong>dificultad más alta</strong>. Sobreviví
+                            al entorno más hostil, domestiqué y crié criaturas de estadísticas perfectas, fabriqué
+                            equipamiento <em>Tek</em> y derroté a los jefes de los obeliscos en máxima dificultad.</p>
+                        <p class="mt-2"><strong>Sobre el Juego:</strong> Juego de supervivencia extrema donde debes
+                            prosperar en una misteriosa reserva llena de dinosaurios y criaturas prehistóricas.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="mundo-abierto"
+                    onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">RPG de Acción / Mundo Abierto</span>
+                        <span class="icono-desplegar">▼ Ver mis logros</span>
+                    </div>
+                    <h4>Assassin's Creed Valhalla</h4>
+                    <p class="sub-info"><strong>Estado:</strong> Completado en la Dificultad Más Alta (Pesadilla /
+                        Drengr)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Mis Logros y Récord Personal:</strong> Me pasé la extensa campaña de
+                            <strong>Assassin's Creed Valhalla en la dificultad más alta</strong>, conquistando todos los
+                            territorios de Inglaterra y Noruega con Eivor, derrotando a los Zelotes de la Orden de los
+                            Antiguos, bestias míticas y asedios de fortalezas sin margen de error.
+                        </p>
+                        <p class="mt-2"><strong>Sobre el Juego:</strong> Épica aventura vikinga del siglo IX donde
+                            lideras al Clan del Cuervo para forjar un nuevo hogar en tierras anglosajonas.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="mundo-abierto"
+                    onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">RPG de Acción / Mundo Abierto</span>
+                        <span class="icono-desplegar">▼ Ver mis logros</span>
+                    </div>
+                    <h4>Assassin's Creed Origins</h4>
+                    <p class="sub-info"><strong>Estado:</strong> Completado en la Dificultad Más Alta (Pesadilla)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Mis Logros y Récord Personal:</strong> Al igual que Valhalla, me pasé
+                            <strong>Assassin's Creed Origins en la dificultad más alta</strong>. Superé todos los jefes,
+                            Phylakes (cazarrecompensas), arenas de gladiadores y elefantes de guerra en el Antiguo
+                            Egipto donde cualquier golpe enemigo es letal.
+                        </p>
+                        <p class="mt-2"><strong>Sobre el Juego:</strong> Narra la historia de Bayek de Siwa y Aya en el
+                            Egipto ptolemaico y el nacimiento de la Hermandad de los Asesinos.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="mundo-abierto"
+                    onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Acción-Aventura / Mundo Abierto</span>
+                        <span class="icono-desplegar">▼ Ver mis logros</span>
+                    </div>
+                    <h4>Grand Theft Auto V (GTA V)</h4>
+                    <p class="sub-info"><strong>Estado:</strong> Historia Principal Completada</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Mis Logros y Récord Personal:</strong> Me pasé toda la campaña principal de
+                            <strong>GTA V</strong> de principio a fin, planificando y ejecutando con éxito todos los
+                            grandes golpes (<em>Heists</em>) al banco, joyería y el Gran Golpe al Union Depository
+                            alternando entre Michael, Franklin y Trevor.
+                        </p>
+                        <p class="mt-2"><strong>Sobre el Juego:</strong> Obra maestra de mundo abierto de Rockstar Games
+                            ambientada en la vibrante ciudad de Los Santos y el condado de Blaine.</p>
                     </div>
                 </div>
 
             </div>
-        </div>
+        </section>
 
-        <!-- MÓDULO SEMANAS 2 Y 3: CASCADA 3 CAPAS, COLA TÁCTIL ANTI-XSS Y BITÁCORA -->
-        <section id="modulo-arcade-semanas" class="modulo-semanas-grid">
-            <div class="arcade-panel-card">
-                <h3>🔬 Recomendador de Estación (Cascada 3 Capas)</h3>
-                <div style="display:flex; flex-direction:column; gap:10px;">
-                    <select id="arcadeCascadaCat" style="padding:10px; border-radius:8px; min-height:44px;">
-                        <option value="">1. Elige Plataforma</option>
-                        <option value="ps5">PlayStation 5 / VR2</option>
-                        <option value="pc">PC Gamer 240Hz</option>
-                        <option value="retro">Cabinas Arcade Retro</option>
-                    </select>
-                    <select id="arcadeCascadaSub" disabled style="padding:10px; border-radius:8px; min-height:44px;">
-                        <option value="">2. Primero elige plataforma</option>
-                    </select>
-                    <div id="arcadeCascadaRes"
-                        style="display:none; padding:10px; border-radius:8px; background:rgba(16,185,129,0.15); color:#10b981; font-weight:700;">
-                    </div>
-                </div>
+        <!-- C.2) APARTADO DE MÚSICA FAVORITA (2 NIVELES INTERACTIVOS CON EL DOM: GÉNERO -> CANCIÓN -> HISTORIA) -->
+        <section id="musica" class="seccion-bloque">
+            <h2 class="titulo-seccion">Músicas Favoritas</h2>
+            <p class="descripcion-seccion">
+                <strong>Paso 1:</strong> Elige un género musical para ver las canciones que me gustan de ese estilo.<br>
+                <strong>Paso 2:</strong> Haz clic sobre cualquier canción para desplegar su <strong>historia e
+                    información completa</strong>.
+            </p>
+
+            <!-- NIVEL 1: Botones de Géneros Musicales (Filtrado DOM con dataset.categoria) -->
+            <div class="botones-filtro" id="botonesMusica">
+                <button class="btn-filtro" onclick="filtrarSeccion('musica', 'indie', this)">Indie Rock & Psicodélico
+                    (6)</button>
+                <button class="btn-filtro" onclick="filtrarSeccion('musica', 'punk-emo', this)">Emo, Pop Punk & Punk
+                    Rock (5)</button>
+                <button class="btn-filtro" onclick="filtrarSeccion('musica', 'metal', this)">Heavy, Power Metal & Core
+                    (5)</button>
+                <button class="btn-filtro" onclick="filtrarSeccion('musica', 'prog-jrock', this)">Rock Progresivo &
+                    J-Rock (3)</button>
+                <button class="btn-filtro" onclick="filtrarSeccion('musica', 'pop-folk', this)">Pop, Funk & Indie Latino
+                    (3)</button>
+                <button class="btn-filtro" onclick="filtrarSeccion('musica', 'todos', this)">Ver Todas (22)</button>
             </div>
 
-            <div class="arcade-panel-card">
-                <h3>🛡️ Cola de Turnos Táctil (Anti-XSS .text())</h3>
-                <div style="display:flex; gap:8px; margin-bottom:10px;">
-                    <input type="text" id="arcadeInputCola" placeholder="Ej: Mesa PS5 - Grupo Alfa"
-                        style="flex:1; min-width:0; padding:10px; border-radius:8px;">
-                    <button type="button" id="arcadeBtnAgregarCola" class="btn-tactil"
-                        style="background:#7c3aed; color:#fff; padding:0 14px;">+</button>
-                    <button type="button" id="arcadeBtnTestXss" class="btn-tactil"
-                        style="background:#ef4444; color:#fff; padding:0 10px;">XSS</button>
-                </div>
-                <div id="arcadeColaLista"
-                    style="display:flex; flex-direction:column; gap:8px; max-height:160px; overflow-y:auto;">
-                    <div class="fila-tactil">
-                        <span class="titulo-truncado">Cabina PS5 Pro — Reserva Demo</span>
-                        <button type="button" class="btn-tactil btn-quitar-arcade"
-                            style="background:#fee2e2; color:#dc2626;">✕</button>
+            <p id="aviso-musica" class="aviso-desplegable">Selecciona un género musical arriba para desplegar las
+                canciones.</p>
+
+            <!-- NIVEL 2: Catálogo de 22 Canciones (Se despliega por JS al apretar un género, y cada canción despliega su historia al hacerle clic) -->
+            <div class="grid-tarjetas-filtro contenedor-colapsado" id="lista-musica">
+
+                <!-- ================= INDIE ROCK & PSICODÉLICO ================= -->
+                <div class="card-filtro card card-interactiva" data-categoria="indie" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Indie Rock / Garage Rock Revival</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Reptilia — The Strokes</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Room on Fire (2003)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Lanzada como el segundo sencillo de <em>Room on
+                                Fire</em>, fue compuesta por Julian Casablancas en Nueva York. Su icónico riff de
+                            guitarra entrelazado entre Nick Valensi y Albert Hammond Jr. retrata la tensión de una
+                            relación nocturna intensa donde ninguno de los dos quiere ceder. Se convirtió en una de las
+                            canciones más famosas de la historia del Indie Rock y de videojuegos como <em>Guitar Hero
+                                III</em>.</p>
                     </div>
                 </div>
-            </div>
 
-            <div class="arcade-panel-card">
-                <h3>📡 Bitácora de Eventos JS</h3>
-                <div id="arcadeLogOutput" class="log-arcade">
-                    <div>[Sistema] LevelUp Arcade Bar listo. Doble clic en una estación para marcar favorita.</div>
+                <div class="card-filtro card card-interactiva" data-categoria="indie" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Indie Rock / New Wave</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Machu Picchu — The Strokes</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Angles (2011)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Abre el cuarto álbum de la banda (<em>Angles</em>),
+                            marcando el regreso de The Strokes tras cinco años de pausa. Combina ritmos bailables de
+                            reggae/new wave con guitarras afiladas, mientras su letra utiliza la ciudadela inca de Machu
+                            Picchu como metáfora de subir a la cima del mundo moderno y el desgaste de la fama.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="indie" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Indie Rock / Garage Rock</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Someday — The Strokes</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Is This It (2001)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Uno de los himnos definitivos de principios de los
+                            2000. Julian Casablancas escribió una canción llena de nostalgia anticipada sobre extrañar
+                            los "buenos viejos tiempos" de juventud con amigos incluso mientras todavía los estaban
+                            viviendo. Su videoclip incluye cameos de bandas como Slash y Guided by Voices.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="indie" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Indie Rock / Post-Punk Revival</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Take Me Out — Franz Ferdinand</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Franz Ferdinand (2004)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> La banda escocesa revolucionó el rock bailable con
+                            esta canción que cambia drásticamente de tempo a mitad del primer minuto. Usa un duelo de
+                            francotiradores (inspirado también en el asesinato del Archiduque Francisco Fernando) como
+                            metáfora de la tensión romántica entre dos personas en una fiesta.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="indie" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Indie Rock / Lo-Fi Surf</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Looking Out for You — Joy Again</h4>
+                    <p class="sub-info"><strong>Sencillo:</strong> Looking Out for You (2015)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Grabada por los jóvenes músicos de Filadelfia Arthur
+                            Shea y Sachi DiSerafino cuando apenas eran adolescentes. Con su banjo/guitarra acelerada y
+                            su tono desenfadado, confiesa los nervios de estar enamorado de alguien en secreto mientras
+                            intenta cuidarla desde lejos. Años después se volvió un fenómeno mundial.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="indie" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Indie Psicodélico / Neo-Psychedelia</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Loser — Tame Impala</h4>
+                    <p class="sub-info"><strong>Artista:</strong> Kevin Parker (Tame Impala)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> El proyecto solista del australiano Kevin Parker
+                            (quien graba todos los instrumentos por sí mismo) explora en sus temas la sensación de
+                            sentirse un "perdedor" o un extraño frente al desamor, el paso del tiempo y la inseguridad
+                            personal, envuelto en bajos hipnóticos, sintetizadores retro y psicodelia moderna.</p>
+                    </div>
+                </div>
+
+                <!-- ================= EMO, POP PUNK & PUNK ROCK ================= -->
+                <div class="card-filtro card card-interactiva" data-categoria="punk-emo" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Alternative Rock / Emo Rock</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>I Don't Love You — My Chemical Romance</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> The Black Parade (2006)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Dentro de la ópera rock <em>The Black Parade</em>,
+                            representa el momento doloroso en el que "El Paciente" se despide de su pareja al darse
+                            cuenta de que el amor se ha roto. Su videoclip en blanco y negro fue dirigido por Marc Webb
+                            y muestra la carga emocional de decir adiós con honestidad.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="punk-emo" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Post-Hardcore / Emo Rock</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Famous Last Words — My Chemical Romance</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> The Black Parade (2006)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Es el clímax de <em>The Black Parade</em>. Gerard
+                            Way la escribió para salvar a su hermano Mikey Way de una profunda depresión mientras
+                            grababan en la supuesta mansión embrujada "The Paramour". Su coro (<em>"I am not afraid to
+                                keep on living, I am not afraid to walk this world alone"</em>) es un himno de
+                            supervivencia. Durante la filmación del video, el baterista Bob Bryar sufrió quemaduras
+                            reales y Gerard se rompió los ligamentos del pie.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="punk-emo" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Alternative Rock / Emo Rock</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Sleep — My Chemical Romance</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> The Black Parade (2006)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Comienza con grabaciones reales en cinta que hizo
+                            Gerard Way hablando dormido sobre los terrores nocturnos y parálisis del sueño que sufría en
+                            la mansión Paramour. La canción crece desde un piano melancólico hasta un muro de guitarras
+                            devastador mientras grita <em>"Just sleep!"</em>.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="punk-emo" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Punk Rock / Rock Ópera</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Jesus of Suburbia — Green Day</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> American Idiot (2004)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Una obra maestra de más de 9 minutos dividida en 5
+                            actos (<em>Jesus of Suburbia, City of the Damned, I Don't Care, Dearly Beloved</em> y
+                            <em>Tales of Another Broken Home</em>). Cuenta la historia de "Jimmy", un joven desencantado
+                            que huye de su pequeño pueblo lleno de hipocresía hacia la gran ciudad buscando darle
+                            sentido a su vida.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="punk-emo" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Pop Punk</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>The Rock Show — blink-182</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Take Off Your Pants and Jacket (2001)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Cuando el mánager de la banda les dijo que al álbum
+                            le faltaba un sencillo veraniego pegadizo, Mark Hoppus escribió <em>The Rock Show</em> en
+                            solo 10 minutos sobre enamorarse de una chica en un concierto punk. Con el presupuesto que
+                            la disquera les dio para el videoclip, salieron a la calle a regalar dinero en efectivo,
+                            destruir un auto y soltar palomas.</p>
+                    </div>
+                </div>
+
+                <!-- ================= HEAVY, POWER METAL & CORE ================= -->
+                <div class="card-filtro card card-interactiva" data-categoria="metal" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Heavy Metal / Hard Rock</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Nightmare — Avenged Sevenfold</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Nightmare (2010)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Es la canción principal del quinto álbum de A7X,
+                            marcada por el fallecimiento de su legendario baterista Jimmy "The Rev" Sullivan en
+                            diciembre de 2009, quien dejó grabadas las maquetas de batería antes de morir. Mike Portnoy
+                            (Dream Theater) grabó la batería final en su honor, convirtiéndola en uno de los temas más
+                            oscuros y potentes del metal moderno.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="metal" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Heavy Metal / Hard Rock</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Bat Country — Avenged Sevenfold</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> City of Evil (2005)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Inspirada en la novela y película <em>Fear and
+                                Loathing in Las Vegas</em> (Pánico y locura en Las Vegas) del periodista Hunter S.
+                            Thompson. Su frase inicial (<em>"He who makes a beast out of himself gets rid of the pain of
+                                being a man"</em>) y el duelo de solos gemelos entre Synyster Gates y Zacky Vengeance
+                            catapultaron a la banda al estrellato mundial.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="metal" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Symphonic Power Metal</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Dawn of Victory (Álbum Completo) — Rhapsody</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Dawn of Victory (2000)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Tercer capítulo de las <em>Crónicas de Algalord
+                                (Emerald Sword Saga)</em> creado por Luca Turilli y Alex Staropoli con la voz épica de
+                            Fabio Lione. Combina coros orquestales, música barroca y doble bombo a toda velocidad para
+                            narrar la batalla del Guerrero de Hielo contra el señor oscuro Akron por las tierras
+                            encantadas.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="metal" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Heavy Metal / Power Metal Neoclásico</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>La Leyenda del Hada y el Mago — Rata Blanca</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Magos, Espadas y Rosas (1990)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> El himno más grande del Heavy Metal en español.
+                            Compuesta por el guitarrista argentino Walter Giardino y cantada por Adrián Barilari, narra
+                            la historia de un mago solitario en un bosque encantado que se enamora de un hada y lucha
+                            contra el mal cuando ella cae en un sueño profundo, coronada por uno de los solos
+                            neoclásicos más famosos del continente.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="metal" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Post-Hardcore / Metalcore Moderno</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Joseph — Falling In Reverse</h4>
+                    <p class="sub-info"><strong>Artista:</strong> Falling In Reverse (Ronnie Radke)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> La banda liderada por Ronnie Radke ( cuyo nombre
+                            completo es Ronald Joseph Radke ) revolucionó la escena mezclando Post-Hardcore, Metalcore,
+                            Rap y arreglos cinematográficos. Sus canciones relatan sus batallas internas contra sus
+                            demonios personales, la crítica social y su redención en la música.</p>
+                    </div>
+                </div>
+
+                <!-- ================= ROCK PROGRESIVO & J-ROCK ================= -->
+                <div class="card-filtro card card-interactiva" data-categoria="prog-jrock"
+                    onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Space Rock / Progressive Rock</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Knights of Cydonia — Muse</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Black Holes and Revelations (2006)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Cierra el álbum <em>Black Holes and Revelations</em>
+                            fusionando el sonido de los westerns espagueti de Ennio Morricone (y el éxito de los años 60
+                            <em>Telstar</em>, grabado por el padre de Matt Bellamy) con rock espacial futurista.
+                            "Cydonia" es una región real del planeta Marte, y su mensaje llama a levantarse y luchar por
+                            nuestros derechos (<em>"No one's gonna take me alive!"</em>).
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="prog-jrock"
+                    onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Hard Rock Alternativo / Progresivo</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Reapers — Muse</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Drones (2015)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Toma su nombre de los drones militares "MQ-9
+                            Reaper". Con un intro en tapping de guitarra de Matt Bellamy e influencias de Rage Against
+                            the Machine y AC/DC, narra la angustia de la guerra moderna donde la muerte cae desde el
+                            cielo controlada a distancia tras una pantalla sin empatía humana.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="prog-jrock"
+                    onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">J-Rock / Alternative Mixture Rock</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Aizo — King Gnu</h4>
+                    <p class="sub-info"><strong>Artista:</strong> King Gnu (Japón)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> King Gnu, liderada por Daiki Tsuneta y la voz de
+                            Satoru Iguchi, es una de las bandas japonesas más innovadoras de la actualidad. Su estilo
+                            "Tokyo New Mixture Style" combina J-Rock alternativo, funk oscuro, cuerdas dramáticas y
+                            falsetes intensos, explorando la dualidad entre el amor y el odio (<em>Alegría y Tormento /
+                                Aizou</em>).</p>
+                    </div>
+                </div>
+
+                <!-- ================= POP, FUNK & INDIE LATINO ================= -->
+                <div class="card-filtro card card-interactiva" data-categoria="pop-folk" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Pop / Funk / Soul</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Fun, Fun, Fun — Pharrell Williams</h4>
+                    <p class="sub-info"><strong>Banda Sonora:</strong> Despicable Me (Mi Villano Favorito, 2010)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Compuesta e interpretada por Pharrell Williams para
+                            la primera película de <em>Mi Villano Favorito</em> (antes de su megaéxito <em>Happy</em> en
+                            la secuela). Combina un ritmo retro de funk y soul de los años 60 con una letra que
+                            contrasta el carácter gruñón de Gru frente a un día soleado lleno de diversión.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="pop-folk" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Pop Rock / Indie Pop</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Zero — Imagine Dragons</h4>
+                    <p class="sub-info"><strong>Álbum:</strong> Origins / Wifi Ralph (2018)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> Creada para los créditos de <em>Ralph Breaks the
+                                Internet</em>. Aunque su música tiene un ritmo alegre y electrónico, Dan Reynolds
+                            explicó que la letra habla sobre la lucha contra el vacío emocional y sentirse como un
+                            "cero" en medio de la era digital, reflejando la búsqueda de autoaceptación de Ralph.</p>
+                    </div>
+                </div>
+
+                <div class="card-filtro card card-interactiva" data-categoria="pop-folk" onclick="toggleHistoria(this)">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Indie Folk / Pop Alternativo Latino</span>
+                        <span class="icono-desplegar">▼ Ver historia</span>
+                    </div>
+                    <h4>Doma — Jósean Log</h4>
+                    <p class="sub-info"><strong>Artista:</strong> Jósean Log (México)</p>
+                    <div class="historia-desplegable">
+                        <hr>
+                        <p><strong>Historia y Significado:</strong> El cantautor mexicano Jósean Log destaca por sus
+                            melodías cálidas con ukelele, percusiones orgánicas y letras honestas. La canción habla
+                            sobre la libertad de ser uno mismo en el amor sin intentar "domar" ni cambiar la esencia de
+                            la otra persona.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- C.3) APARTADO DE PROYECTOS REALIZADOS (C#, ASP.NET y SQL SERVER EXPRESS) -->
+        <section id="proyectos" class="seccion-bloque">
+            <h2 class="titulo-seccion">Mis Proyectos de Software</h2>
+            <p class="descripcion-seccion">Proyectos desarrollados en <strong>C#</strong> con tecnología
+                <strong>ASP.NET</strong> y arquitectura conectada a base de datos <strong>SQL Server Express</strong>:
+            </p>
+
+            <div class="grid-tarjetas-filtro" id="lista-proyectos">
+                <!-- 1. BancoBNB -->
+                <div class="card-filtro card">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">FinTech • Banca y Finanzas</span>
+                    </div>
+                    <h4>BancoBNB</h4>
+                    <p class="sub-info"><strong>Stack:</strong> C# • ASP.NET • SQL Server Express</p>
+                    <p>Sistema bancario transaccional enfocado en la gestión de cuentas de ahorro y cuentas corrientes,
+                        transferencias entre usuarios, registro de depósitos, retiros y auditoría de transacciones
+                        financieras en tiempo real con alta integridad de datos.</p>
+                </div>
+
+                <!-- 2. GestionMedica -->
+                <div class="card-filtro card">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Salud • Gestión Hospitalaria</span>
+                    </div>
+                    <h4>GestionMedica</h4>
+                    <p class="sub-info"><strong>Stack:</strong> C# • ASP.NET • SQL Server Express</p>
+                    <p>Plataforma para centros de salud que automatiza el agendamiento de citas médicas, registro de
+                        pacientes, expedientes e historial clínico digital, control de especialidades, asignación de
+                        médicos y disponibilidad de consultorios.</p>
+                </div>
+
+                <!-- 3. InscripcionesUniversidad -->
+                <div class="card-filtro card">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">Educación • Gestión Académica</span>
+                    </div>
+                    <h4>InscripcionesUniversidad</h4>
+                    <p class="sub-info"><strong>Stack:</strong> C# • ASP.NET • SQL Server Express</p>
+                    <p>Sistema integral de matrícula universitaria que gestiona la oferta de asignaturas por semestre,
+                        control de cupos en aulas, inscripción de materias por parte del alumno, asignación docente y
+                        registro de calificaciones.</p>
+                </div>
+
+                <!-- 4. ProyectoBusquedaTrabajo -->
+                <div class="card-filtro card">
+                    <div class="card-cabecera">
+                        <span class="badge-cat">RRHH • Bolsa de Empleo</span>
+                    </div>
+                    <h4>ProyectoBusquedaTrabajo</h4>
+                    <p class="sub-info"><strong>Stack:</strong> C# • ASP.NET • SQL Server Express</p>
+                    <p>Portal web de reclutamiento laboral que conecta postulantes con empresas reclutadoras. Permite la
+                        publicación de ofertas de empleo por categoría, postulación con currículum vitae (CV) y
+                        seguimiento del estado de cada postulación.</p>
                 </div>
             </div>
         </section>
 
-        <footer>
-            Diseño Web II — Proyecto Integrador Jueves (C2-A1) & Viernes (C2-A2) • Ing. Miguel Angel Cruz Ramos • UPDS
-            2026
-        </footer>
+        <!-- D) FRASE CARACTERÍSTICA -->
+        <section id="frase" class="seccion-bloque">
+            <h2 class="titulo-seccion">Frase Característica</h2>
+            <div class="grid-dos-columnas">
+                <div class="tarjeta caja-frase">
+                    <h3>Mi Frase Característica</h3>
+                    <blockquote>
+                        "El éxito es la suma de pequeños esfuerzos repetidos día tras día."
+                    </blockquote>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN UNIFICADA SEMANAS 1-3: CASCADA, COTIZADOR 30s, ANTI-XSS Y BITÁCORA -->
+        <section id="moduloSemanas" class="seccion-bloque">
+            <h2 class="titulo-seccion">Módulo Interactivo (Semanas 1 - 3)</h2>
+            <p class="descripcion-seccion">
+                Filtro en cascada de 3 capas, cotizador de servicios con temporizador de 30s, lista táctil Anti-XSS (<code>.text()</code>) y bitácora de eventos en tiempo real.
+            </p>
+
+            <div class="modulo-semanas-grid">
+                <!-- 1. Filtro Cascada 3 Capas -->
+                <div class="tarjeta">
+                    <h4>🔬 Filtro en Cascada (3 Capas)</h4>
+                    <div class="campo-form">
+                        <label for="pCascadaArea">1. Área de Interés:</label>
+                        <select id="pCascadaArea">
+                            <option value="">-- Selecciona Área --</option>
+                            <option value="web">Desarrollo Web</option>
+                            <option value="gaming">Gaming &amp; Competitivo</option>
+                            <option value="musica">Música &amp; Entretenimiento</option>
+                        </select>
+                    </div>
+                    <div class="campo-form">
+                        <label for="pCascadaSub">2. Especialidad / Tema:</label>
+                        <select id="pCascadaSub" disabled>
+                            <option value="">-- Primero elige área --</option>
+                        </select>
+                    </div>
+                    <div id="pCascadaRes" class="campo-msg msg-exito oculto"></div>
+                </div>
+
+                <!-- 2. Cotizador Flash 30s -->
+                <div class="tarjeta">
+                    <h4>💰 Cotizador de Servicios (50 BOB/hr)</h4>
+                    <div class="campo-form">
+                        <label for="pHoras">Horas de Desarrollo / Asesoría:</label>
+                        <input type="number" id="pHoras" value="1" min="1">
+                    </div>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: #f97316; margin: 10px 0;">
+                        Total a Pagar: <span id="pTotalBob">50</span> BOB
+                    </p>
+                    <button type="button" id="pBtnAbrirModal" class="btn-contratar btn-tactil-std">
+                        ⏱️ Confirmar Cotización (30s)
+                    </button>
+                </div>
+
+                <!-- 3. Lista Táctil Anti-XSS -->
+                <div class="tarjeta">
+                    <h4>🛡️ Lista Táctil Segura (Anti-XSS)</h4>
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                        <input type="text" id="pInputItem" placeholder="Agregar tarea o canción..." style="flex: 1; min-width: 0;">
+                        <button type="button" id="pBtnAgregarItem" class="btn-tactil" style="background:#0284c7; color:#fff; padding: 0 14px;">+</button>
+                        <button type="button" id="pBtnTestXss" class="btn-tactil" style="background:#ef4444; color:#fff; padding: 0 10px;" title="Probar XSS">XSS</button>
+                    </div>
+                    <div id="pListaTactil" class="lista-tactil-box">
+                        <div class="fila-tactil">
+                            <span class="titulo-truncado">Maquetación PWA Offline-First (UPDS)</span>
+                            <button type="button" class="btn-tactil btn-quitar-item" style="background:#fee2e2; color:#dc2626;">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Bitácora de Eventos en Vivo -->
+                <div class="tarjeta">
+                    <h4>📡 Bitácora de Eventos JS</h4>
+                    <div id="pLogOutput" class="log-personal">
+                        <div>[Sistema] Bitácora lista. Haz doble clic en tarjetas para marcar favoritas.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- E) FORMULARIO DE CONTRATACIÓN CON VALIDACIÓN EN TIEMPO REAL POR CAMPO (Función 4) -->
+        <section id="contratacion" class="seccion-bloque">
+            <h2 class="titulo-seccion">Formulario de Contratación</h2>
+            <p class="descripcion-seccion">
+                ¿Deseas contratar mis servicios o integrarme a tu equipo? Completa los datos de contratación. Cada
+                sector valida en tiempo real lo que falta llenar sin esperar a que presiones el botón:
+            </p>
+
+            <div class="tarjeta form-contratacion-box">
+                <form id="contactForm" novalidate>
+                    <!-- 1. Sector Nombre Completo / Contratante -->
+                    <div class="campo-form">
+                        <label for="nombre">Nombre Completo o Empresa Contratante:</label>
+                        <input type="text" id="nombre" placeholder="Ej. Ing. Carlos Mendoza / Tech Solutions">
+                        <div id="msgNombre" class="campo-msg oculto"></div>
+                    </div>
+
+                    <!-- 2. Sector Fecha de Contratación (Día, Mes, Año) -->
+                    <div class="campo-form">
+                        <label>Fecha de Inicio / Contratación (Día / Mes / Año):</label>
+                        <div class="fecha-grupo">
+                            <input type="number" id="dia" placeholder="Día (1-31)" min="1" max="31">
+                            <input type="number" id="mes" placeholder="Mes (1-12)" min="1" max="12">
+                            <input type="number" id="anio" placeholder="Año (Ej. 2026)" min="2026" max="2027">
+                        </div>
+                        <div id="msgFecha" class="campo-msg oculto"></div>
+                    </div>
+
+                    <!-- 3. Sector Carrera / Área de Contratación -->
+                    <div class="campo-form">
+                        <label for="carrera">Carrera / Puesto o Servicio Requerido:</label>
+                        <input type="text" id="carrera" placeholder="Ej. Ingeniería de Sistemas - Desarrollador Web">
+                        <div id="msgCarrera" class="campo-msg oculto"></div>
+                    </div>
+
+                    <!-- 4. Sector Semestre / Modalidad -->
+                    <div class="campo-form">
+                        <label for="semestre">Semestre Académico / Modalidad de Trabajo:</label>
+                        <select id="semestre">
+                            <option value="">-- Selecciona el semestre / modalidad --</option>
+                            <option value="1er Semestre (Pasantía)">1er Semestre (Pasantía)</option>
+                            <option value="2do Semestre (Pasantía)">2do Semestre (Pasantía)</option>
+                            <option value="3er Semestre (Medio Tiempo)">3er Semestre (Medio Tiempo)</option>
+                            <option value="4to Semestre (Medio Tiempo)">4to Semestre (Medio Tiempo)</option>
+                            <option value="5to Semestre (Por Proyecto)">5to Semestre (Por Proyecto)</option>
+                            <option value="6to Semestre (Por Proyecto)">6to Semestre (Por Proyecto)</option>
+                            <option value="7mo Semestre (Freelance)">7mo Semestre (Freelance)</option>
+                            <option value="8vo Semestre (Freelance)">8vo Semestre (Freelance)</option>
+                            <option value="9no Semestre (Tiempo Completo)">9no Semestre (Tiempo Completo)</option>
+                            <option value="10mo Semestre / Egresado (Tiempo Completo)">10mo Semestre / Egresado (Tiempo
+                                Completo)</option>
+                        </select>
+                        <div id="msgSemestre" class="campo-msg oculto"></div>
+                    </div>
+
+                    <!-- 5. Sector País y Número de Celular (195 Países) -->
+                    <div class="campo-form">
+                        <label for="celular">País y Número de Celular de Contacto (exactamente 8 dígitos):</label>
+                        <div class="telefono-grupo">
+                            <select id="codigoPais">
+                                <option value="">-- Selecciona el País (195 Países) --</option>
+                                <option value="+93">Afganistán (+93)</option>
+                                <option value="+355">Albania (+355)</option>
+                                <option value="+49">Alemania (+49)</option>
+                                <option value="+376">Andorra (+376)</option>
+                                <option value="+244">Angola (+244)</option>
+                                <option value="+1-268">Antigua y Barbuda (+1-268)</option>
+                                <option value="+966">Arabia Saudita (+966)</option>
+                                <option value="+213">Argelia (+213)</option>
+                                <option value="+54">Argentina (+54)</option>
+                                <option value="+374">Armenia (+374)</option>
+                                <option value="+61">Australia (+61)</option>
+                                <option value="+43">Austria (+43)</option>
+                                <option value="+994">Azerbaiyán (+994)</option>
+                                <option value="+1-242">Bahamas (+1-242)</option>
+                                <option value="+880">Bangladés (+880)</option>
+                                <option value="+1-246">Barbados (+1-246)</option>
+                                <option value="+973">Baréin (+973)</option>
+                                <option value="+32">Bélgica (+32)</option>
+                                <option value="+501">Belice (+501)</option>
+                                <option value="+229">Benín (+229)</option>
+                                <option value="+375">Bielorrusia (+375)</option>
+                                <option value="+95">Birmania (Myanmar) (+95)</option>
+                                <option value="+591" selected>Bolivia (+591)</option>
+                                <option value="+387">Bosnia y Herzegovina (+387)</option>
+                                <option value="+267">Botsuana (+267)</option>
+                                <option value="+55">Brasil (+55)</option>
+                                <option value="+673">Brunéi (+673)</option>
+                                <option value="+359">Bulgaria (+359)</option>
+                                <option value="+226">Burkina Faso (+226)</option>
+                                <option value="+257">Burundi (+257)</option>
+                                <option value="+975">Bután (+975)</option>
+                                <option value="+238">Cabo Verde (+238)</option>
+                                <option value="+855">Camboya (+855)</option>
+                                <option value="+237">Camerún (+237)</option>
+                                <option value="+1">Canadá (+1)</option>
+                                <option value="+974">Catar (+974)</option>
+                                <option value="+235">Chad (+235)</option>
+                                <option value="+56">Chile (+56)</option>
+                                <option value="+86">China (+86)</option>
+                                <option value="+357">Chipre (+357)</option>
+                                <option value="+57">Colombia (+57)</option>
+                                <option value="+269">Comoras (+269)</option>
+                                <option value="+850">Corea del Norte (+850)</option>
+                                <option value="+82">Corea del Sur (+82)</option>
+                                <option value="+225">Costa de Marfil (+225)</option>
+                                <option value="+506">Costa Rica (+506)</option>
+                                <option value="+385">Croacia (+385)</option>
+                                <option value="+53">Cuba (+53)</option>
+                                <option value="+45">Dinamarca (+45)</option>
+                                <option value="+1-767">Dominica (+1-767)</option>
+                                <option value="+593">Ecuador (+593)</option>
+                                <option value="+20">Egipto (+20)</option>
+                                <option value="+503">El Salvador (+503)</option>
+                                <option value="+971">Emiratos Árabes Unidos (+971)</option>
+                                <option value="+291">Eritrea (+291)</option>
+                                <option value="+421">Eslovaquia (+421)</option>
+                                <option value="+386">Eslovenia (+386)</option>
+                                <option value="+34">España (+34)</option>
+                                <option value="+1">Estados Unidos (+1)</option>
+                                <option value="+372">Estonia (+372)</option>
+                                <option value="+268">Esuatini (+268)</option>
+                                <option value="+251">Etiopía (+251)</option>
+                                <option value="+63">Filipinas (+63)</option>
+                                <option value="+358">Finlandia (+358)</option>
+                                <option value="+679">Fiyi (+679)</option>
+                                <option value="+33">Francia (+33)</option>
+                                <option value="+241">Gabón (+241)</option>
+                                <option value="+220">Gambia (+220)</option>
+                                <option value="+995">Georgia (+995)</option>
+                                <option value="+233">Ghana (+233)</option>
+                                <option value="+1-473">Granada (+1-473)</option>
+                                <option value="+30">Grecia (+30)</option>
+                                <option value="+502">Guatemala (+502)</option>
+                                <option value="+224">Guinea (+224)</option>
+                                <option value="+245">Guinea-Bisáu (+245)</option>
+                                <option value="+240">Guinea Ecuatorial (+240)</option>
+                                <option value="+592">Guyana (+592)</option>
+                                <option value="+509">Haití (+509)</option>
+                                <option value="+504">Honduras (+504)</option>
+                                <option value="+36">Hungría (+36)</option>
+                                <option value="+91">India (+91)</option>
+                                <option value="+62">Indonesia (+62)</option>
+                                <option value="+964">Irak (+964)</option>
+                                <option value="+98">Irán (+98)</option>
+                                <option value="+353">Irlanda (+353)</option>
+                                <option value="+354">Islandia (+354)</option>
+                                <option value="+692">Islas Marshall (+692)</option>
+                                <option value="+677">Islas Salomón (+677)</option>
+                                <option value="+972">Israel (+972)</option>
+                                <option value="+39">Italia (+39)</option>
+                                <option value="+1-876">Jamaica (+1-876)</option>
+                                <option value="+81">Japón (+81)</option>
+                                <option value="+962">Jordania (+962)</option>
+                                <option value="+7">Kazajistán (+7)</option>
+                                <option value="+254">Kenia (+254)</option>
+                                <option value="+996">Kirguistán (+996)</option>
+                                <option value="+686">Kiribati (+686)</option>
+                                <option value="+965">Kuwait (+965)</option>
+                                <option value="+856">Laos (+856)</option>
+                                <option value="+266">Lesoto (+266)</option>
+                                <option value="+371">Letonia (+371)</option>
+                                <option value="+961">Líbano (+961)</option>
+                                <option value="+231">Liberia (+231)</option>
+                                <option value="+218">Libia (+218)</option>
+                                <option value="+423">Liechtenstein (+423)</option>
+                                <option value="+370">Lituania (+370)</option>
+                                <option value="+352">Luxemburgo (+352)</option>
+                                <option value="+389">Macedonia del Norte (+389)</option>
+                                <option value="+261">Madagascar (+261)</option>
+                                <option value="+60">Malasia (+60)</option>
+                                <option value="+265">Malaui (+265)</option>
+                                <option value="+960">Maldivas (+960)</option>
+                                <option value="+223">Malí (+223)</option>
+                                <option value="+356">Malta (+356)</option>
+                                <option value="+212">Marruecos (+212)</option>
+                                <option value="+230">Mauricio (+230)</option>
+                                <option value="+222">Mauritania (+222)</option>
+                                <option value="+52">México (+52)</option>
+                                <option value="+691">Micronesia (+691)</option>
+                                <option value="+373">Moldavia (+373)</option>
+                                <option value="+377">Mónaco (+377)</option>
+                                <option value="+976">Mongolia (+976)</option>
+                                <option value="+382">Montenegro (+382)</option>
+                                <option value="+258">Mozambique (+258)</option>
+                                <option value="+264">Namibia (+264)</option>
+                                <option value="+674">Nauru (+674)</option>
+                                <option value="+977">Nepal (+977)</option>
+                                <option value="+505">Nicaragua (+505)</option>
+                                <option value="+227">Níger (+227)</option>
+                                <option value="+234">Nigeria (+234)</option>
+                                <option value="+47">Noruega (+47)</option>
+                                <option value="+64">Nueva Zelanda (+64)</option>
+                                <option value="+968">Omán (+968)</option>
+                                <option value="+31">Países Bajos (+31)</option>
+                                <option value="+92">Pakistán (+92)</option>
+                                <option value="+680">Palaos (+680)</option>
+                                <option value="+970">Palestina (+970)</option>
+                                <option value="+507">Panamá (+507)</option>
+                                <option value="+675">Papúa Nueva Guinea (+675)</option>
+                                <option value="+595">Paraguay (+595)</option>
+                                <option value="+51">Perú (+51)</option>
+                                <option value="+48">Polonia (+48)</option>
+                                <option value="+351">Portugal (+351)</option>
+                                <option value="+44">Reino Unido (+44)</option>
+                                <option value="+236">República Centroafricana (+236)</option>
+                                <option value="+420">República Checa (+420)</option>
+                                <option value="+242">República del Congo (+242)</option>
+                                <option value="+243">República Democrática del Congo (+243)</option>
+                                <option value="+1-809">República Dominicana (+1-809)</option>
+                                <option value="+250">Ruanda (+250)</option>
+                                <option value="+40">Rumania (+40)</option>
+                                <option value="+7">Rusia (+7)</option>
+                                <option value="+685">Samoa (+685)</option>
+                                <option value="+1-869">San Cristóbal y Nieves (+1-869)</option>
+                                <option value="+378">San Marino (+378)</option>
+                                <option value="+1-784">San Vicente y las Granadinas (+1-784)</option>
+                                <option value="+1-758">Santa Lucía (+1-758)</option>
+                                <option value="+239">Santo Tomé y Príncipe (+239)</option>
+                                <option value="+221">Senegal (+221)</option>
+                                <option value="+381">Serbia (+381)</option>
+                                <option value="+248">Seychelles (+248)</option>
+                                <option value="+232">Sierra Leona (+232)</option>
+                                <option value="+65">Singapur (+65)</option>
+                                <option value="+963">Siria (+963)</option>
+                                <option value="+252">Somalia (+252)</option>
+                                <option value="+94">Sri Lanka (+94)</option>
+                                <option value="+27">Sudáfrica (+27)</option>
+                                <option value="+249">Sudán (+249)</option>
+                                <option value="+211">Sudán del Sur (+211)</option>
+                                <option value="+46">Suecia (+46)</option>
+                                <option value="+41">Suiza (+41)</option>
+                                <option value="+597">Surinam (+597)</option>
+                                <option value="+66">Tailandia (+66)</option>
+                                <option value="+255">Tanzania (+255)</option>
+                                <option value="+992">Tayikistán (+992)</option>
+                                <option value="+670">Timor Oriental (+670)</option>
+                                <option value="+228">Togo (+228)</option>
+                                <option value="+676">Tonga (+676)</option>
+                                <option value="+1-868">Trinidad y Tobago (+1-868)</option>
+                                <option value="+216">Túnez (+216)</option>
+                                <option value="+993">Turkmenistán (+993)</option>
+                                <option value="+90">Turquía (+90)</option>
+                                <option value="+688">Tuvalu (+688)</option>
+                                <option value="+380">Ucrania (+380)</option>
+                                <option value="+256">Uganda (+256)</option>
+                                <option value="+598">Uruguay (+598)</option>
+                                <option value="+998">Uzbekistán (+998)</option>
+                                <option value="+678">Vanuatu (+678)</option>
+                                <option value="+379">Vaticano (+379)</option>
+                                <option value="+58">Venezuela (+58)</option>
+                                <option value="+84">Vietnam (+84)</option>
+                                <option value="+967">Yemen (+967)</option>
+                                <option value="+253">Yibuti (+253)</option>
+                                <option value="+260">Zambia (+260)</option>
+                                <option value="+263">Zimbabue (+263)</option>
+                            </select>
+                            <input type="tel" id="celular" placeholder="Número de celular (8 dígitos)"
+                                maxlength="8">
+                        </div>
+
+                        <div id="msgCelular" class="campo-msg oculto"></div>
+                    </div>
+
+                    <button type="submit" class="btn-contratar">Enviar Solicitud de Contratación</button>
+                </form>
+
+                <!-- Contenedor donde el DOM inyecta el resumen final al enviar -->
+                <div id="alertaBox"></div>
+                <div id="detalleProyecto" class="detalle-dompurify"></div>
+
+                <!-- Historial de Contrataciones Guardadas en Supabase -->
+                <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--card-border);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+                        <h4 style="margin:0; font-size:1rem;">🗄️ Solicitudes de Contratación en Supabase (<span id="countContratacionesSupa">0</span>)</h4>
+                        <button type="button" id="btnRefrescarContratacionesSupa" class="btn-toggle" style="min-height:44px;">🔄 Actualizar BD</button>
+                    </div>
+                    <div id="listaContratacionesSupabase" class="lista-tactil-box">
+                        <div class="fila-tactil"><span class="titulo-truncado">Cargando solicitudes desde Supabase...</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        </section>
+
+        <!-- BARRA DOCK FLEXBOX (Abajo en Celular Vertical / Lateral Izquierda en Horizontal o PC) -->
+        <nav class="dock-acciones" aria-label="Menú principal">
+            <button type="button" class="dock-btn" data-scroll="#pasatiempos">👤 Sobre Mí</button>
+            <button type="button" class="dock-btn" data-scroll="#horario">📅 Horario</button>
+            <button type="button" class="dock-btn" data-scroll="#juegos">🎮 Juegos</button>
+            <button type="button" class="dock-btn" data-scroll="#musica">🎵 Música</button>
+            <button type="button" class="dock-btn" data-scroll="#proyectos">💻 Proyectos</button>
+            <button type="button" class="dock-btn" data-scroll="#contratacion">✉️ Contratar</button>
+        </nav>
+    </main>
+
+    <!-- ==========================================
+         4. FOOTER CON 3 REDES SOCIALES (O | O | O)
+         ========================================== -->
+    <footer id="footer" class="pie-pagina">
+        <div class="footer-contenedor">
+            <div class="footer-info">
+                <h4>Mi Perfil Profesional</h4>
+                <p>Diseño Web II • UPDS 2026</p>
+            </div>
+
+            <!-- Los 3 círculos divididos tal como en el dibujo: O | O | O -->
+            <div class="redes-sociales">
+                <div class="red-columna">
+                    <a href="https://instagram.com" target="_blank" class="circulo-red" title="Instagram">
+                        IG
+                    </a>
+                    <span>Instagram</span>
+                </div>
+                <div class="red-columna">
+                    <a href="https://tiktok.com" target="_blank" class="circulo-red" title="TikTok">
+                        TK
+                    </a>
+                    <span>TikTok</span>
+                </div>
+                <div class="red-columna">
+                    <a href="https://www.facebook.com/daniel.aliaga.3766" target="_blank" class="circulo-red"
+                        title="facebook">
+                        FB
+                    </a>
+                    <span>Facebook</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Cotización Flash 30s -->
+    <div id="modalPersonal30s" class="modal-personal-overlay">
+        <div class="modal-personal-box">
+            <h3>⏱️ Tarifa Flash Bloqueada</h3>
+            <div id="pTimerVisual" class="timer-personal">00:30s</div>
+            <p>Monto a confirmar: <strong id="pModalMonto">50 BOB</strong></p>
+            <div style="display:flex; gap:8px; margin-top:14px;">
+                <button type="button" id="pBtnConfirmarModal" class="btn-contratar btn-tactil-std" style="background:#16a34a; flex:1;">✅ Confirmar</button>
+                <button type="button" id="pBtnCerrarModal" class="btn-contratar btn-tactil-std" style="background:#64748b; flex:1;">Cancelar</button>
+            </div>
+        </div>
     </div>
 
-    <!-- =========================================================
-         SCRIPTS JQUERY (JUEVES C2-A1 + VIERNES C2-A2)
-         ========================================================= -->
+    <div id="toastPersonal" class="toast-personal"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

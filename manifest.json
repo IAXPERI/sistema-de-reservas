@@ -1,12 +1,12 @@
 {
-  "name": "LevelUp Arcade Bar - PWA Cero-Scroll",
-  "short_name": "LevelUpPWA",
-  "description": "PWA Móvil Cero-Scroll de LevelUp Arcade Bar (Diseño Web II - UPDS 2026)",
-  "start_url": "pwa.html",
+  "name": "Mi Perfil Personal — Aplicación Web Adaptable & PWA",
+  "short_name": "MiPerfil",
+  "description": "Portafolio Personal con Flexbox Responsivo, A11Y, BEM, DOMPurify y PWA Offline-First (Diseño Web II - UPDS 2026)",
+  "start_url": "./index.html",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#090d16",
-  "theme_color": "#7c3aed",
+  "background_color": "#090d1e",
+  "theme_color": "#0f294a",
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -22,4 +22,3 @@
     }
   ]
 }
-
