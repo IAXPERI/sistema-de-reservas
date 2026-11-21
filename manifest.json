@@ -1,11 +1,11 @@
 {
-  "name": "Mi Perfil Personal — Aplicación Web Adaptable & PWA",
-  "short_name": "MiPerfil",
-  "description": "Portafolio Personal con Flexbox Responsivo, A11Y, BEM, DOMPurify y PWA Offline-First (Diseño Web II - UPDS 2026)",
+  "name": "LevelUp Arcade Bar — Aplicación Web Adaptable & PWA",
+  "short_name": "LevelUp",
+  "description": "Sistema unificado de reserva de estaciones PS5, PC Gamer 240Hz, Cabinas Arcade y Snack Bar con Flexbox Responsivo y PWA Offline-First.",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#090d1e",
+  "background_color": "#090d16",
   "theme_color": "#0f294a",
   "icons": [
     {
