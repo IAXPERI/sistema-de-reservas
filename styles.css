@@ -1122,6 +1122,18 @@
                 background: var(--bg-container);
                 box-shadow: var(--card-shadow);
             }
+
+            .dock-btn {
+                background: var(--bg-card);
+                color: var(--text-main);
+                border: 1px solid var(--border-color);
+            }
+
+            body.dark-mode .dock-btn {
+                background: rgba(255, 255, 255, 0.08);
+                color: #ffffff;
+                border-color: rgba(255, 255, 255, 0.18);
+            }
         }
 
         @media (min-width: 1024px) {
